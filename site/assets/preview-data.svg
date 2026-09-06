@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Gwinnett precinct model</title>
+  <desc id="desc">An exploratory network of connected precinct-level data points.</desc>
+  <rect width="1200" height="675" fill="#f7f7f2" />
+  <g stroke="#dedfd7" stroke-width="1">
+    <path d="M0 48H1200M0 96H1200M0 144H1200M0 192H1200M0 240H1200M0 288H1200M0 336H1200M0 384H1200M0 432H1200M0 480H1200M0 528H1200M0 576H1200M0 624H1200" />
+  </g>
+  <text x="72" y="112" fill="#2d2926" font-family="Inter, Arial, sans-serif" font-size="68" font-weight="500">Precinct Model</text>
+  <text x="74" y="158" fill="#718176" font-family="Inter, Arial, sans-serif" font-size="24" letter-spacing="1.5">GWINNETT DATA SCIENCE</text>
+  <g fill="none" stroke="#cfd3cb" stroke-width="2">
+    <path d="M250 260L410 214L586 286L732 226L936 314L866 496L610 548L414 480L250 260Z" />
+    <path d="M410 214L414 480M586 286L610 548M732 226L866 496M250 260L610 548M410 214L936 314M414 480L732 226" />
+  </g>
+  <g fill="#8c9a8e">
+    <circle cx="410" cy="214" r="22" />
+    <circle cx="732" cy="226" r="22" />
+    <circle cx="414" cy="480" r="22" />
+    <circle cx="866" cy="496" r="22" />
+  </g>
+  <g fill="#caa47f">
+    <circle cx="250" cy="260" r="22" />
+    <circle cx="586" cy="286" r="22" />
+    <circle cx="936" cy="314" r="22" />
+    <circle cx="610" cy="548" r="22" />
+  </g>
+  <rect x="78" y="556" width="256" height="42" rx="21" fill="#fffffa" stroke="#cfd3cb" stroke-width="2" />
+  <text x="206" y="584" fill="#657466" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="middle" letter-spacing="1">EXPLORATORY ANALYSIS</text>
+</svg>

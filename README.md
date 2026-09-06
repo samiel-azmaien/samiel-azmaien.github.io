@@ -9,7 +9,7 @@ A responsive personal portfolio for Samiel Azmaien, a Georgia Tech computer scie
 
 - Editorial landing page and personal introduction
 - Experience timeline
-- Selected project and research cards
+- Featured project and research cards with current and concluded status
 - Technical repertoire grouped by systems, data, and ML
 - Lightweight reveal animations and responsive navigation
 
@@ -51,7 +51,7 @@ Pushes to `main` trigger the Pages workflow. See [`DEPLOY.md`](./DEPLOY.md) for 
 
 ## Content notes
 
-Project links and quantitative claims should be reviewed whenever the underlying demos, reports, or repositories change. Private previews are labelled as such rather than presented as public demos.
+Project links and quantitative claims should be reviewed whenever the underlying demos, reports, or repositories change. Concluded projects are labelled explicitly, and protected previews should not be presented as public demos.
 
 ## License
 
