@@ -7,11 +7,11 @@ A responsive personal portfolio for Samiel Azmaien, a Georgia Tech computer scie
 
 ## Highlights
 
-- Editorial landing page and personal introduction
-- Experience timeline
-- Featured project and research cards with current and concluded status
-- Technical repertoire grouped by systems, data, and ML
-- Lightweight reveal animations and responsive navigation
+- Cinematic monochrome landing page with a short system boot sequence
+- Interactive featured-project rail and career system log
+- Halftone, HUD, scanline, and parallax visual treatments
+- Paid-session selector connected to Stripe-backed Calendly events
+- Responsive layout, accessible controls, reduced-motion support, and invert mode
 
 ## Technology
 
@@ -40,10 +40,10 @@ styles.css           Layout, typography, and responsive styles
 script.js            Navigation and reveal behavior
 assets/              Portrait and project previews
 .github/workflows/   GitHub Pages deployment
-site/                Deployment mirror used by the current workflow
+site/                Legacy snapshot retained for reference
 ```
 
-The root and `site/` trees currently mirror one another. A future cleanup should keep a single source directory to eliminate drift.
+The GitHub Pages workflow deploys the root source directly. The `site/` folder is an older snapshot and is not part of the live build.
 
 ## Deployment
 
