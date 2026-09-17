@@ -120,11 +120,11 @@ if (canvas && shell) {
 
     screenContext.strokeStyle = "rgba(223,255,0,.88)";
     screenContext.lineWidth = 2;
-    screenContext.strokeRect(742, 74, 146, 42);
+    screenContext.strokeRect(742, 132, 146, 42);
     screenContext.fillStyle = "#dfff00";
     screenContext.font = "700 16px 'Space Mono', monospace";
     screenContext.textAlign = "center";
-    screenContext.fillText("OPEN PROJECT ↗", 815, 86);
+    screenContext.fillText("OPEN PROJECT ↗", 815, 144);
 
     screenContext.fillStyle = "rgba(223,255,0,.86)";
     screenContext.fillRect(0, 306, screenSurface.width, 3);
