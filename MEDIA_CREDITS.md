@@ -11,10 +11,20 @@ The project viewer uses short, muted stock clips as atmospheric backgrounds. The
 
 These clips were offered for commercial and personal use under the [Mixkit Stock Video Free License](https://mixkit.co/license/#videoFree) when downloaded on September 17, 2026.
 
-## Coverr License
+## NASA / STScI media
 
-- Andromeda: [AI-Generated Majestic Spiral Galaxy Brilliance](https://coverr.co/videos/ai-generated-majestic-spiral-galaxy-brilliance)
+- Andromeda: [Galaxy Development Across Cosmic Distance](https://science.nasa.gov/asset/webb/galaxy-development-across-cosmic-distance/)
 
-The clip was offered with free commercial rights under the [Coverr license](https://coverr.co/license) when downloaded on September 17, 2026.
+Credit: NASA, ESA, CSA, and STScI. The project viewer uses the silent 1920×1080 MP4 made available from the NASA Science asset page. The previous Coverr clip was removed because its preview contained a visible watermark.
+
+## 3D hardware
+
+- [Sony PSP](https://sketchfab.com/3d-models/sony-psp-dca89d10ec304d0cab76837750df7761) by [Ilya Ostrovsky](https://sketchfab.com/strov)
+
+The model is used under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). It is rendered with custom lighting and an original HTML video interface; Sony and the model creator do not endorse this site.
+
+## Rendering library
+
+- [three.js](https://threejs.org/) r160, MIT License
 
 No footage from Getty Images or iStock is bundled with this website.

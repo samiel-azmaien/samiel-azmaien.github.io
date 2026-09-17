@@ -8,8 +8,8 @@ A responsive personal portfolio for Samiel Azmaien, a Georgia Tech computer scie
 ## Highlights
 
 - Cinematic monochrome landing page with a short system boot sequence
-- Interactive handheld project deck with five cinematic video channels
-- Halftone, HUD, scanline, and parallax visual treatments
+- Interactive licensed Sony PSP model with five cinematic project channels
+- Pixel pointer trail, custom cursor, live telemetry, channel wipes, HUD, scanlines, and parallax
 - Paid-session selector connected to Stripe-backed Calendly events
 - Responsive layout, accessible controls, reduced-motion support, and invert mode
 
@@ -20,6 +20,7 @@ Stock-footage sources and license links are documented in [`MEDIA_CREDITS.md`](.
 - Semantic HTML
 - Custom CSS
 - Vanilla JavaScript
+- three.js and glTF
 - GitHub Actions and GitHub Pages
 
 The site deliberately avoids a client-side framework so it remains fast, portable, and easy to maintain.

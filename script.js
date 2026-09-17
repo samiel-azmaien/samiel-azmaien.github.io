@@ -127,8 +127,9 @@ if (parallaxStage && parallaxObject && !prefersReducedMotion) {
 const projectViewer = document.querySelector("[data-project-viewer]");
 if (projectViewer) {
   const buttons = [...projectViewer.querySelectorAll("[data-project-button]")];
-  const previous = projectViewer.querySelector("[data-project-prev]");
-  const next = projectViewer.querySelector("[data-project-next]");
+  const previousButtons = [...projectViewer.querySelectorAll("[data-project-prev]")];
+  const nextButtons = [...projectViewer.querySelectorAll("[data-project-next]")];
+  const openButtons = [...projectViewer.querySelectorAll("[data-project-open]")];
   const video = projectViewer.querySelector("[data-project-video]");
   const number = projectViewer.querySelector("[data-project-number]");
   const railNumber = projectViewer.querySelector("[data-project-number-rail]");
@@ -193,11 +194,14 @@ if (projectViewer) {
     }
 
     if (focusButton) selected.focus();
+    projectViewer.classList.remove("is-channel-switching");
+    requestAnimationFrame(() => projectViewer.classList.add("is-channel-switching"));
   };
 
   buttons.forEach((button, index) => button.addEventListener("click", () => showProject(index)));
-  previous?.addEventListener("click", () => showProject(activeIndex - 1));
-  next?.addEventListener("click", () => showProject(activeIndex + 1));
+  previousButtons.forEach((button) => button.addEventListener("click", () => showProject(activeIndex - 1)));
+  nextButtons.forEach((button) => button.addEventListener("click", () => showProject(activeIndex + 1)));
+  openButtons.forEach((button) => button.addEventListener("click", () => screenLink?.click()));
 
   projectViewer.addEventListener("keydown", (event) => {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
@@ -223,6 +227,115 @@ if (projectViewer) {
   const requestedProject = Number.parseInt(new URLSearchParams(window.location.search).get("project") || "0", 10);
   showProject(Number.isFinite(requestedProject) ? requestedProject : 0);
   if (prefersReducedMotion) video?.pause();
+}
+
+const pointerCanvas = document.querySelector("[data-pointer-trail]");
+const pointerCursor = document.querySelector("[data-pointer-cursor]");
+const pointerLabel = document.querySelector("[data-pointer-label]");
+const pointerReadout = document.querySelector("[data-telemetry-pointer]");
+const telemetryView = document.querySelector("[data-telemetry-view]");
+const telemetryCpu = document.querySelector("[data-telemetry-cpu]");
+const hasFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+if (pointerCanvas && pointerCursor && hasFinePointer && !prefersReducedMotion) {
+  const context = pointerCanvas.getContext("2d");
+  const points = [];
+  let cursorX = -100;
+  let cursorY = -100;
+  let previousX = cursorX;
+  let previousY = cursorY;
+  let frame = 0;
+
+  const resizePointerCanvas = () => {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    pointerCanvas.width = Math.round(window.innerWidth * ratio);
+    pointerCanvas.height = Math.round(window.innerHeight * ratio);
+    pointerCanvas.style.width = `${window.innerWidth}px`;
+    pointerCanvas.style.height = `${window.innerHeight}px`;
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  };
+
+  const addTrail = (x, y) => {
+    const distance = Math.hypot(x - previousX, y - previousY);
+    const segments = Math.max(1, Math.min(10, Math.ceil(distance / 12)));
+    for (let index = 0; index < segments; index += 1) {
+      const progress = index / segments;
+      points.push({
+        x: previousX + (x - previousX) * progress,
+        y: previousY + (y - previousY) * progress,
+        life: 1,
+        size: index % 3 === 0 ? 4 : 2,
+      });
+    }
+    previousX = x;
+    previousY = y;
+    if (points.length > 140) points.splice(0, points.length - 140);
+  };
+
+  window.addEventListener("pointermove", (event) => {
+    cursorX = event.clientX;
+    cursorY = event.clientY;
+    if (previousX < 0) {
+      previousX = cursorX;
+      previousY = cursorY;
+    }
+    addTrail(cursorX, cursorY);
+    pointerCursor.classList.add("is-visible");
+    pointerCursor.style.transform = `translate3d(${cursorX + 8}px, ${cursorY - 9}px, 0)`;
+    if (pointerReadout) {
+      pointerReadout.textContent = `${String(Math.round(cursorX)).padStart(4, "0")}:${String(Math.round(cursorY)).padStart(4, "0")}`;
+    }
+
+    const interactive = event.target.closest("a, button, [data-cursor]");
+    pointerCursor.classList.toggle("is-active", Boolean(interactive));
+    if (pointerLabel) {
+      pointerLabel.textContent = interactive?.dataset.cursor || (interactive?.tagName === "A" ? "OPEN" : interactive ? "EXEC" : "PTR");
+    }
+  }, { passive: true });
+
+  document.documentElement.addEventListener("mouseleave", () => pointerCursor.classList.remove("is-visible"));
+  window.addEventListener("resize", resizePointerCanvas, { passive: true });
+
+  const drawTrail = () => {
+    context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    frame += 1;
+    for (let index = points.length - 1; index >= 0; index -= 1) {
+      const point = points[index];
+      point.life -= 0.028;
+      if (point.life <= 0) {
+        points.splice(index, 1);
+        continue;
+      }
+      const gridX = Math.round(point.x / 4) * 4;
+      const gridY = Math.round(point.y / 4) * 4;
+      context.fillStyle = `rgba(223, 255, 0, ${point.life * 0.55})`;
+      context.fillRect(gridX, gridY, point.size, point.size);
+      if ((index + frame) % 6 === 0) {
+        context.fillStyle = `rgba(255, 255, 255, ${point.life * 0.22})`;
+        context.fillRect(gridX + 5, gridY, 1, 1);
+      }
+    }
+    requestAnimationFrame(drawTrail);
+  };
+
+  resizePointerCanvas();
+  drawTrail();
+}
+
+if (telemetryView) {
+  const telemetrySections = [...document.querySelectorAll("main section[id]")];
+  const viewObserver = new IntersectionObserver((entries) => {
+    const active = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (active?.target.id) telemetryView.textContent = active.target.id.toUpperCase();
+  }, { threshold: [0.2, 0.45, 0.7] });
+  telemetrySections.forEach((section) => viewObserver.observe(section));
+}
+
+if (telemetryCpu && !prefersReducedMotion) {
+  window.setInterval(() => {
+    const value = 1.8 + Math.random() * 4.7;
+    telemetryCpu.textContent = `${value.toFixed(1).padStart(4, "0")}%`;
+  }, 1200);
 }
 
 const sessionOptions = [...document.querySelectorAll(".session-option")];

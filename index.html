@@ -15,7 +15,15 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=VT323&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260917-deck2" />
+    <link rel="stylesheet" href="./styles.css?v=20260917-psp" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./assets/vendor/three.module.min.js",
+          "three/addons/": "./assets/vendor/addons/"
+        }
+      }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -27,6 +35,10 @@
 
     <div class="grain" aria-hidden="true"></div>
     <div class="scanlines" aria-hidden="true"></div>
+    <canvas class="pointer-trail" data-pointer-trail aria-hidden="true"></canvas>
+    <div class="pointer-cursor" data-pointer-cursor aria-hidden="true">
+      <span>+</span><small data-pointer-label>PTR</small>
+    </div>
 
     <header class="site-header" data-header>
       <a class="wordmark" href="#top" aria-label="Samiel Azmaien, home">
@@ -136,16 +148,8 @@
             <div class="deck-orbit deck-orbit--a" aria-hidden="true"></div>
             <div class="deck-orbit deck-orbit--b" aria-hidden="true"></div>
             <div class="system-deck" data-deck-shell tabindex="0" aria-label="Interactive project viewer. Use the arrow keys to change projects.">
-              <div class="system-deck__edge" aria-hidden="true"></div>
-              <div class="system-deck__brand" aria-hidden="true">
-                <span>SAMIEL</span>
-                <i>PROJECT SYSTEM / 01</i>
-              </div>
-
-              <div class="deck-control deck-control--left" aria-hidden="true">
-                <span class="deck-stick"></span>
-                <span class="deck-dpad"><i></i><i></i></span>
-              </div>
+              <canvas class="deck-model" data-project-canvas aria-hidden="true"></canvas>
+              <div class="deck-hardware-loading" data-model-loading>LOADING HARDWARE_</div>
 
               <div class="deck-screen">
                 <video
@@ -174,16 +178,14 @@
                 </div>
               </div>
 
-              <div class="deck-control deck-control--right" aria-hidden="true">
-                <span class="deck-button deck-button--a">△</span>
-                <span class="deck-button deck-button--b">○</span>
-                <span class="deck-button deck-button--c">×</span>
-                <span class="deck-button deck-button--d">□</span>
+              <div class="deck-inputs" aria-label="Handheld project controls">
+                <button class="deck-hit deck-hit--dpad-left" type="button" data-project-prev data-cursor="PREV" aria-label="Previous project"></button>
+                <button class="deck-hit deck-hit--dpad-right" type="button" data-project-next data-cursor="NEXT" aria-label="Next project"></button>
+                <button class="deck-hit deck-hit--square" type="button" data-project-prev data-cursor="PREV" aria-label="Previous project"></button>
+                <button class="deck-hit deck-hit--triangle" type="button" data-project-next data-cursor="NEXT" aria-label="Next project"></button>
+                <button class="deck-hit deck-hit--circle" type="button" data-project-next data-cursor="NEXT" aria-label="Next project"></button>
+                <button class="deck-hit deck-hit--cross" type="button" data-project-open data-cursor="OPEN" aria-label="Open selected project"></button>
               </div>
-
-              <div class="deck-speakers deck-speakers--left" aria-hidden="true"></div>
-              <div class="deck-speakers deck-speakers--right" aria-hidden="true"></div>
-              <div class="deck-led" aria-hidden="true"><i></i> ACCESS</div>
             </div>
           </div>
 
@@ -274,6 +276,10 @@
             </p>
             <a class="signal-link" data-project-readout-link href="https://totemlayer.com/" target="_blank" rel="noreferrer">Open project ↗</a>
           </div>
+          <p class="model-credit">
+            3D hardware: <a href="https://sketchfab.com/3d-models/sony-psp-dca89d10ec304d0cab76837750df7761" target="_blank" rel="noreferrer">Sony PSP by Ilya Ostrovsky</a>,
+            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>.
+          </p>
         </div>
       </section>
 
@@ -512,6 +518,13 @@
       <button type="button" data-grid>grid on/off</button>
     </div>
 
-    <script src="./script.js?v=20260917-deck2"></script>
+    <div class="system-telemetry" aria-hidden="true">
+      <span>VIEW <b data-telemetry-view>TOP</b></span>
+      <span>PTR <b data-telemetry-pointer>0000:0000</b></span>
+      <span>CPU <b data-telemetry-cpu>02.4%</b></span>
+    </div>
+
+    <script src="./script.js?v=20260917-psp"></script>
+    <script type="module" src="./project-deck.js?v=20260917-psp"></script>
   </body>
 </html>
