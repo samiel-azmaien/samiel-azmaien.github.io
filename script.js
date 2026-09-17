@@ -143,6 +143,7 @@ if (projectViewer) {
   const deckShell = projectViewer.querySelector("[data-deck-shell]");
   let activeIndex = 0;
   let switchToken = 0;
+  let modelInteractive = false;
 
   const showProject = (index, focusButton = false) => {
     activeIndex = (index + buttons.length) % buttons.length;
@@ -183,13 +184,13 @@ if (projectViewer) {
         const revealVideo = () => {
           if (token !== switchToken) return;
           video.classList.remove("is-switching");
-          if (!prefersReducedMotion) video.play().catch(() => {});
+          if (!prefersReducedMotion && modelInteractive) video.play().catch(() => {});
         };
 
         video.addEventListener("loadeddata", revealVideo, { once: true });
         window.setTimeout(revealVideo, 900);
       }, 190);
-    } else if (video && !prefersReducedMotion) {
+    } else if (video && !prefersReducedMotion && modelInteractive) {
       video.play().catch(() => {});
     }
 
@@ -202,6 +203,18 @@ if (projectViewer) {
   previousButtons.forEach((button) => button.addEventListener("click", () => showProject(activeIndex - 1)));
   nextButtons.forEach((button) => button.addEventListener("click", () => showProject(activeIndex + 1)));
   openButtons.forEach((button) => button.addEventListener("click", () => screenLink?.click()));
+
+  projectViewer.addEventListener("project-control", (event) => {
+    const action = event.detail?.action;
+    if (action === "previous") showProject(activeIndex - 1);
+    if (action === "next") showProject(activeIndex + 1);
+    if (action === "open") screenLink?.click();
+  });
+
+  projectViewer.addEventListener("psp-ready", () => {
+    modelInteractive = true;
+    if (!prefersReducedMotion) video?.play().catch(() => {});
+  }, { once: true });
 
   projectViewer.addEventListener("keydown", (event) => {
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;

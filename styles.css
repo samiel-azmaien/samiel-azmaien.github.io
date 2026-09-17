@@ -1488,6 +1488,24 @@ main {
   isolation: isolate;
 }
 
+.system-deck::before {
+  position: absolute;
+  z-index: 0;
+  inset: 7% 1%;
+  content: "";
+  border: 1px solid #313638;
+  border-radius: 27% / 48%;
+  background:
+    radial-gradient(circle at 13% 50%, #292d2e 0 4.8%, #0b0d0e 5% 7.2%, transparent 7.4%),
+    radial-gradient(circle at 87% 50%, #292d2e 0 4.8%, #0b0d0e 5% 7.2%, transparent 7.4%),
+    linear-gradient(165deg, #202426 0%, #070909 42%, #16191a 100%);
+  box-shadow: 0 32px 55px rgba(0, 0, 0, 0.78), inset 0 1px rgba(255, 255, 255, 0.08);
+  opacity: 1;
+  transition: opacity 240ms ease;
+}
+
+.system-deck.model-ready::before { opacity: 0; }
+
 .contact__artifact {
   position: absolute;
   z-index: -1;
@@ -1849,8 +1867,8 @@ main {
 .system-telemetry b { color: var(--acid); font-weight: 700; }
 
 .deck-scene {
-  min-height: clamp(670px, 68vw, 940px);
-  padding-block: clamp(4rem, 8vw, 8rem);
+  min-height: 0;
+  padding-block: clamp(2.5rem, 5vw, 5rem);
 }
 
 .system-deck {
@@ -1879,12 +1897,15 @@ main {
   inset: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
+  pointer-events: auto;
+  touch-action: manipulation;
   opacity: 0;
   transition: opacity 500ms ease;
 }
 
 .model-ready .deck-model { opacity: 1; }
+
+.project-data[hidden] { display: none !important; }
 
 .deck-hardware-loading {
   position: absolute;
@@ -2014,20 +2035,22 @@ body.is-inverted .deck-model {
 }
 
 @media (max-width: 860px) {
-  .deck-scene { min-height: 610px; }
-  .system-deck { width: 108vw; }
+  .deck-scene { min-height: 0; padding-block: 2.5rem; }
+  .system-deck { width: min(100%, 760px); }
   .system-telemetry span:nth-child(3) { display: none; }
 }
 
 @media (max-width: 600px) {
-  .deck-scene { min-height: 450px; padding-block: 3rem; }
-  .system-deck { width: 138vw; }
+  .work.section-shell { padding-inline: 0.75rem; }
+  .deck-scene { min-height: 0; padding-block: 1.25rem 1.75rem; }
+  .system-deck { width: 100%; max-width: calc(100vw - 1.5rem); }
+  .project-viewer { overflow: visible; }
   .deck-screen__copy h3 { font-size: clamp(1.4rem, 8.5vw, 2.35rem); }
   .deck-screen__topline { font-size: 0.27rem; }
   .deck-screen__copy p { font-size: 0.28rem; }
   .system-telemetry { bottom: 0.75rem; left: 0.75rem; }
   .system-telemetry span { padding: 0.42rem; }
-  .model-credit { text-align: left; }
+  .model-credit { padding-inline: 0; text-align: left; }
 }
 
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {

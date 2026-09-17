@@ -3,6 +3,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 const canvas = document.querySelector("[data-project-canvas]");
 const shell = document.querySelector("[data-deck-shell]");
+const projectViewer = document.querySelector("[data-project-viewer]");
 const loading = document.querySelector("[data-model-loading]");
 const projectVideo = document.querySelector("[data-project-video]");
 const projectStatus = document.querySelector("[data-project-status]");
@@ -10,6 +11,7 @@ const projectNumber = document.querySelector("[data-project-number]");
 const projectCategory = document.querySelector("[data-project-category]");
 const projectTitle = document.querySelector("[data-project-title]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const canTilt = window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion;
 
 if (canvas && shell) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
@@ -44,6 +46,18 @@ if (canvas && shell) {
   let screenTexture = null;
   let targetTiltX = 0;
   let targetTiltY = 0;
+  let hoveredControl = null;
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  const interactiveControls = [];
+  const controlActions = new Map([
+    [2, "next"],
+    [4, "previous"],
+    [5, "next"],
+    [6, "next"],
+    [7, "open"],
+    [8, "previous"],
+  ]);
 
   const screenSurface = document.createElement("canvas");
   screenSurface.width = 960;
@@ -222,13 +236,13 @@ if (canvas && shell) {
     const height = Math.max(1, shell.clientHeight);
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
-    camera.fov = width < 700 ? 34 : 27;
-    camera.position.z = width < 700 ? 27 : 23;
+    camera.fov = width < 700 ? 29 : 27;
+    camera.position.z = width < 700 ? 24 : 23;
     camera.updateProjectionMatrix();
   };
 
   new GLTFLoader().load(
-    "./assets/models/sony-psp.glb",
+    "./assets/models/sony-psp.glb?v=20260917-psp3",
     ({ scene: source }) => {
       const buttons = [];
       const discarded = [];
@@ -243,7 +257,15 @@ if (canvas && shell) {
         }
         if (name.startsWith("screen")) screenMesh = object;
         const match = name.match(/^button(\d+)/);
-        if (match) buttons.push({ number: Number(match[1]), mesh: object });
+        if (match) {
+          const number = Number(match[1]);
+          buttons.push({ number, mesh: object });
+          const action = controlActions.get(number);
+          if (action) {
+            object.userData.controlAction = action;
+            interactiveControls.push(object);
+          }
+        }
 
         if (object.material) {
           object.material = object.material.clone();
@@ -252,6 +274,25 @@ if (canvas && shell) {
           object.material.envMapIntensity = 1.2;
         }
       });
+
+
+      const controlMeshes = [...interactiveControls];
+      interactiveControls.length = 0;
+      controlMeshes.forEach((mesh) => {
+        mesh.geometry.computeBoundingSphere();
+        const bounds = mesh.geometry.boundingSphere;
+        if (!bounds) return;
+        const hitTarget = new THREE.Mesh(
+          new THREE.SphereGeometry(Math.max(bounds.radius * 1.45, 0.42), 12, 8),
+          new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.001, depthWrite: false })
+        );
+        hitTarget.position.copy(bounds.center);
+        hitTarget.userData.controlAction = mesh.userData.controlAction;
+        hitTarget.userData.controlMesh = mesh;
+        mesh.add(hitTarget);
+        interactiveControls.push(hitTarget);
+      });
+
 
       discarded.forEach((object) => object.parent?.remove(object));
       hardware.add(source);
@@ -269,9 +310,11 @@ if (canvas && shell) {
         paintProjectScreen();
       }
 
+
       modelReady = true;
       loading?.classList.add("is-hidden");
       shell.classList.add("model-ready");
+      projectViewer?.dispatchEvent(new CustomEvent("psp-ready"));
       fitCamera();
     },
     undefined,
@@ -281,8 +324,57 @@ if (canvas && shell) {
     }
   );
 
+  const restoreControl = (mesh) => {
+    if (!mesh?.material?.emissive || !mesh.userData.baseEmissive) return;
+    mesh.material.emissive.copy(mesh.userData.baseEmissive);
+    mesh.material.emissiveIntensity = mesh.userData.baseEmissiveIntensity;
+  };
+
+  const highlightControl = (mesh) => {
+    mesh = mesh?.userData.controlMesh || mesh;
+    if (mesh === hoveredControl) return;
+    restoreControl(hoveredControl);
+    hoveredControl = mesh;
+    if (!mesh?.material?.emissive) return;
+    if (!mesh.userData.baseEmissive) {
+      mesh.userData.baseEmissive = mesh.material.emissive.clone();
+      mesh.userData.baseEmissiveIntensity = mesh.material.emissiveIntensity;
+    }
+    mesh.material.emissive.set(0xdfff00);
+    mesh.material.emissiveIntensity = 0.75;
+  };
+
+  const pickControl = (event) => {
+    if (!modelReady || !interactiveControls.length) return null;
+    const bounds = canvas.getBoundingClientRect();
+    pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+    pointer.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    return raycaster.intersectObjects(interactiveControls, false)[0]?.object || null;
+  };
+
+  canvas.addEventListener("pointermove", (event) => {
+    const control = pickControl(event);
+    highlightControl(control);
+    if (control) canvas.dataset.cursor = control.userData.controlAction.toUpperCase();
+    else delete canvas.dataset.cursor;
+  });
+
+  canvas.addEventListener("pointerleave", () => {
+    highlightControl(null);
+    delete canvas.dataset.cursor;
+  });
+
+  canvas.addEventListener("pointerup", (event) => {
+    const control = pickControl(event);
+    const action = control?.userData.controlAction;
+    if (!action) return;
+    event.preventDefault();
+    projectViewer?.dispatchEvent(new CustomEvent("project-control", { detail: { action } }));
+  });
+
   shell.addEventListener("pointermove", (event) => {
-    if (reduceMotion) return;
+    if (!canTilt) return;
     const bounds = shell.getBoundingClientRect();
     targetTiltY = ((event.clientX - bounds.left) / bounds.width - 0.5) * 0.18;
     targetTiltX = ((event.clientY - bounds.top) / bounds.height - 0.5) * -0.1;

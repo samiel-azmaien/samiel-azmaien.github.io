@@ -15,7 +15,6 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=VT323&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260917-psp" />
     <script type="importmap">
       {
         "imports": {
@@ -24,6 +23,10 @@
         }
       }
     </script>
+    <link rel="preload" href="./assets/models/sony-psp.glb?v=20260917-psp3" as="fetch" crossorigin />
+    <link rel="modulepreload" href="./assets/vendor/three.module.min.js" />
+    <link rel="modulepreload" href="./assets/vendor/addons/loaders/GLTFLoader.js" />
+    <link rel="stylesheet" href="./styles.css?v=20260917-psp3" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -149,7 +152,7 @@
             <div class="deck-orbit deck-orbit--b" aria-hidden="true"></div>
             <div class="system-deck" data-deck-shell tabindex="0" aria-label="Interactive project viewer. Use the arrow keys to change projects.">
               <canvas class="deck-model" data-project-canvas aria-hidden="true"></canvas>
-              <div class="deck-hardware-loading" data-model-loading>LOADING HARDWARE_</div>
+              <div class="deck-hardware-loading" data-model-loading aria-hidden="true">LOADING HARDWARE_</div>
 
               <div class="deck-screen">
                 <video
@@ -158,9 +161,9 @@
                   poster="./assets/preview-totem.svg"
                   muted
                   loop
-                  autoplay
                   playsinline
-                  preload="metadata"
+                  preload="none"
+                  aria-hidden="true"
                   aria-label="Cinematic footage for the selected project"
                 ></video>
                 <div class="deck-screen__shade" aria-hidden="true"></div>
@@ -178,18 +181,10 @@
                 </div>
               </div>
 
-              <div class="deck-inputs" aria-label="Handheld project controls">
-                <button class="deck-hit deck-hit--dpad-left" type="button" data-project-prev data-cursor="PREV" aria-label="Previous project"></button>
-                <button class="deck-hit deck-hit--dpad-right" type="button" data-project-next data-cursor="NEXT" aria-label="Next project"></button>
-                <button class="deck-hit deck-hit--square" type="button" data-project-prev data-cursor="PREV" aria-label="Previous project"></button>
-                <button class="deck-hit deck-hit--triangle" type="button" data-project-next data-cursor="NEXT" aria-label="Next project"></button>
-                <button class="deck-hit deck-hit--circle" type="button" data-project-next data-cursor="NEXT" aria-label="Next project"></button>
-                <button class="deck-hit deck-hit--cross" type="button" data-project-open data-cursor="OPEN" aria-label="Open selected project"></button>
-              </div>
             </div>
           </div>
 
-          <div class="project-console">
+          <div class="project-data" hidden>
             <div class="project-counter" aria-live="polite"><strong data-project-number-rail>01</strong><span>/05</span></div>
             <div class="project-dots" role="tablist" aria-label="Featured projects">
               <button
@@ -269,13 +264,6 @@
             </div>
           </div>
 
-          <div class="project-readout" aria-live="polite">
-            <span>ACTIVE FILE</span>
-            <p data-project-description>
-              A cross-company identity and authorization layer for AI agents—verifying representation and current permission for an exact request. Qualified for EF Start &amp; SHI.
-            </p>
-            <a class="signal-link" data-project-readout-link href="https://totemlayer.com/" target="_blank" rel="noreferrer">Open project ↗</a>
-          </div>
           <p class="model-credit">
             3D hardware: <a href="https://sketchfab.com/3d-models/sony-psp-dca89d10ec304d0cab76837750df7761" target="_blank" rel="noreferrer">Sony PSP by Ilya Ostrovsky</a>,
             <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>.
@@ -524,7 +512,7 @@
       <span>CPU <b data-telemetry-cpu>02.4%</b></span>
     </div>
 
-    <script src="./script.js?v=20260917-psp"></script>
-    <script type="module" src="./project-deck.js?v=20260917-psp"></script>
+    <script src="./script.js?v=20260917-psp3"></script>
+    <script type="module" src="./project-deck.js?v=20260917-psp3"></script>
   </body>
 </html>
