@@ -208,7 +208,10 @@ if (projectViewer) {
     const action = event.detail?.action;
     if (action === "previous") showProject(activeIndex - 1);
     if (action === "next") showProject(activeIndex + 1);
-    if (action === "open") screenLink?.click();
+    if (action === "open" && screenLink?.href) {
+      const openedProject = window.open(screenLink.href, "_blank", "noopener,noreferrer");
+      if (openedProject) openedProject.opener = null;
+    }
   });
 
   projectViewer.addEventListener("psp-ready", () => {

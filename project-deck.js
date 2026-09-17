@@ -118,22 +118,30 @@ if (canvas && shell) {
     screenContext.arc(862, 41, 7, 0, Math.PI * 2);
     screenContext.fill();
 
+    screenContext.strokeStyle = "rgba(223,255,0,.88)";
+    screenContext.lineWidth = 2;
+    screenContext.strokeRect(742, 74, 146, 42);
+    screenContext.fillStyle = "#dfff00";
+    screenContext.font = "700 16px 'Space Mono', monospace";
+    screenContext.textAlign = "center";
+    screenContext.fillText("OPEN PROJECT ↗", 815, 86);
+
     screenContext.fillStyle = "rgba(223,255,0,.86)";
-    screenContext.fillRect(0, 352, screenSurface.width, 3);
+    screenContext.fillRect(0, 306, screenSurface.width, 3);
     screenContext.textAlign = "left";
     screenContext.fillStyle = "#dfff00";
     screenContext.font = "700 22px 'Space Mono', monospace";
-    screenContext.fillText(projectNumber?.textContent || "01", 72, 370);
+    screenContext.fillText(projectNumber?.textContent || "01", 72, 326);
     screenContext.fillStyle = "rgba(255,255,255,.9)";
-    screenContext.fillText("/ 05", 112, 370);
+    screenContext.fillText("/ 05", 112, 326);
     screenContext.font = "700 18px 'Space Mono', monospace";
-    screenContext.fillText((projectCategory?.textContent || "SYSTEM").toUpperCase(), 194, 372);
+    screenContext.fillText((projectCategory?.textContent || "SYSTEM").toUpperCase(), 194, 328);
 
     const titleText = projectTitle?.textContent || "Project";
     const titleSize = titleText.length > 17 ? 48 : titleText.length > 10 ? 58 : 70;
     screenContext.font = `${titleSize}px VT323, monospace`;
     screenContext.fillStyle = "#fff";
-    screenContext.fillText(titleText, 70, 410);
+    screenContext.fillText(titleText, 70, 365);
     screenTexture.needsUpdate = true;
   };
 
@@ -307,6 +315,8 @@ if (canvas && shell) {
         screenTexture.magFilter = THREE.LinearFilter;
         screenMesh.material = new THREE.MeshBasicMaterial({ map: screenTexture, toneMapped: false });
         screenMesh.renderOrder = 3;
+        screenMesh.userData.controlAction = "open";
+        interactiveControls.push(screenMesh);
         paintProjectScreen();
       }
 
