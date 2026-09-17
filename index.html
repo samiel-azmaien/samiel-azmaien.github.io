@@ -15,7 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=VT323&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260916-signal3" />
+    <link rel="stylesheet" href="./styles.css?v=20260917-deck2" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -132,111 +132,147 @@
         </div>
 
         <div class="project-viewer reveal" data-project-viewer>
-          <div class="project-viewer__stage">
-            <article class="project-slide is-active" data-project="0">
-              <a class="project-media" href="https://totemlayer.com/" target="_blank" rel="noreferrer" aria-label="Open Totem">
-                <img src="./assets/preview-totem.svg" alt="Totem agent identity architecture" />
-                <span class="project-media__scan" aria-hidden="true"></span>
-              </a>
-              <div class="project-slide__meta">
-                <p><span>01</span> CURRENT COLLABORATION</p>
-                <p>AGENT IDENTITY / AUTHORIZATION</p>
+          <div class="deck-scene" data-deck-scene>
+            <div class="deck-orbit deck-orbit--a" aria-hidden="true"></div>
+            <div class="deck-orbit deck-orbit--b" aria-hidden="true"></div>
+            <div class="system-deck" data-deck-shell tabindex="0" aria-label="Interactive project viewer. Use the arrow keys to change projects.">
+              <div class="system-deck__edge" aria-hidden="true"></div>
+              <div class="system-deck__brand" aria-hidden="true">
+                <span>SAMIEL</span>
+                <i>PROJECT SYSTEM / 01</i>
               </div>
-              <div class="project-slide__copy">
-                <h3>Totem</h3>
-                <p>
-                  A cross-company identity and authorization layer for AI agents—verifying who an agent represents and whether it has current permission for an exact request. Qualified for EF Start &amp; SHI.
-                </p>
-                <a class="signal-link" href="https://totemlayer.com/" target="_blank" rel="noreferrer">Open system ↗</a>
-              </div>
-            </article>
 
-            <article class="project-slide" data-project="1" hidden>
-              <a class="project-media" href="https://isef.net/project/soft022t-optimizing-gpu-architecture-markov-based-caching" target="_blank" rel="noreferrer" aria-label="Open GPU architecture research">
-                <img src="./assets/preview-gpu.png" alt="GPU Markov caching research diagram" />
-                <span class="project-media__scan" aria-hidden="true"></span>
-              </a>
-              <div class="project-slide__meta">
-                <p><span>02</span> GRANTED PATENT</p>
-                <p>GPU / MARKOV PREFETCHING</p>
+              <div class="deck-control deck-control--left" aria-hidden="true">
+                <span class="deck-stick"></span>
+                <span class="deck-dpad"><i></i><i></i></span>
               </div>
-              <div class="project-slide__copy">
-                <h3>GPU Architecture</h3>
-                <p>
-                  Markov-chain and neural prediction for V100 memory-block transitions, reporting an 85% L1 cache hit rate, 40% lower memory overhead, and 25% faster data transfer. Protected by a granted patent.
-                </p>
-                <a class="signal-link" href="https://isef.net/project/soft022t-optimizing-gpu-architecture-markov-based-caching" target="_blank" rel="noreferrer">View ISEF research ↗</a>
-              </div>
-            </article>
 
-            <article class="project-slide" data-project="2" hidden>
-              <a class="project-media" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4997415" target="_blank" rel="noreferrer" aria-label="Open FND neural network paper">
-                <img src="./assets/preview-fnd.png" alt="FND MRI classification research diagram" />
-                <span class="project-media__scan" aria-hidden="true"></span>
-              </a>
-              <div class="project-slide__meta">
-                <p><span>03</span> PUBLISHED RESEARCH</p>
-                <p>NEURAL NETWORKS / MRI</p>
+              <div class="deck-screen">
+                <video
+                  data-project-video
+                  src="./assets/video/totem-network.mp4"
+                  poster="./assets/preview-totem.svg"
+                  muted
+                  loop
+                  autoplay
+                  playsinline
+                  preload="metadata"
+                  aria-label="Cinematic footage for the selected project"
+                ></video>
+                <div class="deck-screen__shade" aria-hidden="true"></div>
+                <div class="deck-screen__scan" aria-hidden="true"></div>
+                <div class="deck-screen__hud">
+                  <div class="deck-screen__topline">
+                    <span data-project-status>CURRENT COLLABORATION</span>
+                    <span>REC <i></i></span>
+                  </div>
+                  <div class="deck-screen__copy">
+                    <p><span data-project-number>01</span> / 05&nbsp;&nbsp; <b data-project-category>AGENT IDENTITY</b></p>
+                    <h3 data-project-title>Totem</h3>
+                  </div>
+                  <a class="deck-screen__open" data-project-link href="https://totemlayer.com/" target="_blank" rel="noreferrer" aria-label="Open Totem project">↗</a>
+                </div>
               </div>
-              <div class="project-slide__copy">
-                <h3>FND Analysis</h3>
-                <p>
-                  MRI-derived quality features for logistic regression and dense neural-network experiments, paired with a published paper and explicit public-sample limitations.
-                </p>
-                <a class="signal-link" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4997415" target="_blank" rel="noreferrer">Read the paper ↗</a>
-              </div>
-            </article>
 
-            <article class="project-slide" data-project="3" hidden>
-              <a class="project-media" href="https://github.com/samiel-azmaien/datascience25" target="_blank" rel="noreferrer" aria-label="Open swing-state probability project">
-                <img src="./assets/preview-data.svg" alt="Election probability data science project" />
-                <span class="project-media__scan" aria-hidden="true"></span>
-              </a>
-              <div class="project-slide__meta">
-                <p><span>04</span> DATA SCIENCE</p>
-                <p>PROBABILITY / GEOSPATIAL</p>
+              <div class="deck-control deck-control--right" aria-hidden="true">
+                <span class="deck-button deck-button--a">△</span>
+                <span class="deck-button deck-button--b">○</span>
+                <span class="deck-button deck-button--c">×</span>
+                <span class="deck-button deck-button--d">□</span>
               </div>
-              <div class="project-slide__copy">
-                <h3>Swing State Probabilities</h3>
-                <p>
-                  An exploratory TSA Data Science project analyzing recent election results and precinct-level swing-score heuristics across Gwinnett County.
-                </p>
-                <a class="signal-link" href="https://github.com/samiel-azmaien/datascience25" target="_blank" rel="noreferrer">Inspect repository ↗</a>
-              </div>
-            </article>
 
-            <article class="project-slide" data-project="4" hidden>
-              <a class="project-media" href="https://andromeda-neon-six.vercel.app/" target="_blank" rel="noreferrer" aria-label="Open the archived Andromeda project">
-                <img src="./assets/preview-andromeda.png" alt="Andromeda prediction-market analytics project" />
-                <span class="project-media__scan" aria-hidden="true"></span>
-              </a>
-              <div class="project-slide__meta">
-                <p><span>05</span> CONCLUDED / HACKLANTA 2026</p>
-                <p>PREDICTION MARKETS / BACKTESTING</p>
-              </div>
-              <div class="project-slide__copy">
-                <h3>Andromeda</h3>
-                <p>
-                  A concluded four-person exploration of prediction-market analytics and paper trading. The public frontend remains online as an archive; backend services have been retired.
-                </p>
-                <a class="signal-link" href="https://andromeda-neon-six.vercel.app/" target="_blank" rel="noreferrer">View archive ↗</a>
-              </div>
-            </article>
+              <div class="deck-speakers deck-speakers--left" aria-hidden="true"></div>
+              <div class="deck-speakers deck-speakers--right" aria-hidden="true"></div>
+              <div class="deck-led" aria-hidden="true"><i></i> ACCESS</div>
+            </div>
           </div>
 
-          <div class="project-viewer__controls">
-            <div class="project-counter" aria-live="polite"><strong data-project-number>01</strong><span>/05</span></div>
+          <div class="project-console">
+            <div class="project-counter" aria-live="polite"><strong data-project-number-rail>01</strong><span>/05</span></div>
             <div class="project-dots" role="tablist" aria-label="Featured projects">
-              <button class="project-dot is-active" type="button" role="tab" aria-selected="true" data-project-button="0"><span>01</span> Totem</button>
-              <button class="project-dot" type="button" role="tab" aria-selected="false" data-project-button="1"><span>02</span> GPU</button>
-              <button class="project-dot" type="button" role="tab" aria-selected="false" data-project-button="2"><span>03</span> FND</button>
-              <button class="project-dot" type="button" role="tab" aria-selected="false" data-project-button="3"><span>04</span> Data</button>
-              <button class="project-dot" type="button" role="tab" aria-selected="false" data-project-button="4"><span>05</span> Andromeda</button>
+              <button
+                class="project-dot is-active"
+                type="button"
+                role="tab"
+                aria-selected="true"
+                data-project-button="0"
+                data-title="Totem"
+                data-status="CURRENT COLLABORATION"
+                data-category="AGENT IDENTITY"
+                data-video="./assets/video/totem-network.mp4"
+                data-poster="./assets/preview-totem.svg"
+                data-url="https://totemlayer.com/"
+                data-description="A cross-company identity and authorization layer for AI agents—verifying representation and current permission for an exact request. Qualified for EF Start & SHI."
+              ><span>01</span> Totem</button>
+              <button
+                class="project-dot"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-project-button="1"
+                data-title="GPU Architecture"
+                data-status="GRANTED PATENT"
+                data-category="GPU / MARKOV"
+                data-video="./assets/video/gpu-silicon.mp4"
+                data-poster="./assets/preview-gpu.png"
+                data-url="https://isef.net/project/soft022t-optimizing-gpu-architecture-markov-based-caching"
+                data-description="Markov-chain and neural prediction for V100 memory-block transitions, reporting an 85% L1 cache hit rate, 40% lower memory overhead, and 25% faster data transfer."
+              ><span>02</span> GPU</button>
+              <button
+                class="project-dot"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-project-button="2"
+                data-title="FND Analysis"
+                data-status="PUBLISHED RESEARCH"
+                data-category="NEURAL NETS / MRI"
+                data-video="./assets/video/fnd-medical.mp4"
+                data-poster="./assets/preview-fnd.png"
+                data-url="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4997415"
+                data-description="MRI-derived quality features for logistic regression and dense neural-network experiments, paired with a published paper and explicit public-sample limitations."
+              ><span>03</span> FND</button>
+              <button
+                class="project-dot"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-project-button="3"
+                data-title="Swing State Probabilities"
+                data-status="DATA SCIENCE"
+                data-category="PROBABILITY / GEO"
+                data-video="./assets/video/data-code.mp4"
+                data-poster="./assets/preview-data.svg"
+                data-url="https://github.com/samiel-azmaien/datascience25"
+                data-description="An exploratory TSA Data Science project analyzing recent election results and precinct-level swing-score heuristics across Gwinnett County."
+              ><span>04</span> Data</button>
+              <button
+                class="project-dot"
+                type="button"
+                role="tab"
+                aria-selected="false"
+                data-project-button="4"
+                data-title="Andromeda"
+                data-status="CONCLUDED / 2026"
+                data-category="PREDICTION MARKETS"
+                data-video="./assets/video/andromeda-space.mp4"
+                data-poster="./assets/preview-andromeda.png"
+                data-url="https://andromeda-neon-six.vercel.app/"
+                data-description="A concluded four-person exploration of prediction-market analytics and paper trading. The public frontend remains online as an archive."
+              ><span>05</span> Andromeda</button>
             </div>
             <div class="project-arrows">
               <button type="button" data-project-prev aria-label="Previous project">←</button>
               <button type="button" data-project-next aria-label="Next project">→</button>
             </div>
+          </div>
+
+          <div class="project-readout" aria-live="polite">
+            <span>ACTIVE FILE</span>
+            <p data-project-description>
+              A cross-company identity and authorization layer for AI agents—verifying representation and current permission for an exact request. Qualified for EF Start &amp; SHI.
+            </p>
+            <a class="signal-link" data-project-readout-link href="https://totemlayer.com/" target="_blank" rel="noreferrer">Open project ↗</a>
           </div>
         </div>
       </section>
@@ -476,6 +512,6 @@
       <button type="button" data-grid>grid on/off</button>
     </div>
 
-    <script src="./script.js?v=20260916-signal3"></script>
+    <script src="./script.js?v=20260917-deck2"></script>
   </body>
 </html>

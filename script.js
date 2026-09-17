@@ -16,7 +16,12 @@ function finishBoot() {
   document.body.classList.add("is-ready");
   boot?.classList.add("is-done");
   if (window.location.hash) {
-    document.querySelector(window.location.hash)?.scrollIntoView({ behavior: "auto", block: "start" });
+    const scrollToDeepLink = () => document.querySelector(window.location.hash)?.scrollIntoView({ behavior: "auto", block: "start" });
+    scrollToDeepLink();
+    requestAnimationFrame(scrollToDeepLink);
+    window.addEventListener("load", scrollToDeepLink, { once: true });
+    document.fonts?.ready.then(scrollToDeepLink);
+    window.setTimeout(scrollToDeepLink, 1200);
   }
   window.setTimeout(() => boot?.remove(), 650);
 }
@@ -121,21 +126,27 @@ if (parallaxStage && parallaxObject && !prefersReducedMotion) {
 
 const projectViewer = document.querySelector("[data-project-viewer]");
 if (projectViewer) {
-  const slides = [...projectViewer.querySelectorAll("[data-project]")];
   const buttons = [...projectViewer.querySelectorAll("[data-project-button]")];
   const previous = projectViewer.querySelector("[data-project-prev]");
   const next = projectViewer.querySelector("[data-project-next]");
-  const counter = projectViewer.querySelector("[data-project-number]");
+  const video = projectViewer.querySelector("[data-project-video]");
+  const number = projectViewer.querySelector("[data-project-number]");
+  const railNumber = projectViewer.querySelector("[data-project-number-rail]");
+  const title = projectViewer.querySelector("[data-project-title]");
+  const status = projectViewer.querySelector("[data-project-status]");
+  const category = projectViewer.querySelector("[data-project-category]");
+  const screenLink = projectViewer.querySelector("[data-project-link]");
+  const description = projectViewer.querySelector("[data-project-description]");
+  const readoutLink = projectViewer.querySelector("[data-project-readout-link]");
+  const deckScene = projectViewer.querySelector("[data-deck-scene]");
+  const deckShell = projectViewer.querySelector("[data-deck-shell]");
   let activeIndex = 0;
+  let switchToken = 0;
 
   const showProject = (index, focusButton = false) => {
-    activeIndex = (index + slides.length) % slides.length;
-
-    slides.forEach((slide, slideIndex) => {
-      const isActive = slideIndex === activeIndex;
-      slide.hidden = !isActive;
-      slide.classList.toggle("is-active", isActive);
-    });
+    activeIndex = (index + buttons.length) % buttons.length;
+    const selected = buttons[activeIndex];
+    const selectedNumber = String(activeIndex + 1).padStart(2, "0");
 
     buttons.forEach((button, buttonIndex) => {
       const isActive = buttonIndex === activeIndex;
@@ -144,8 +155,44 @@ if (projectViewer) {
       button.tabIndex = isActive ? 0 : -1;
     });
 
-    if (counter) counter.textContent = String(activeIndex + 1).padStart(2, "0");
-    if (focusButton) buttons[activeIndex]?.focus();
+    if (number) number.textContent = selectedNumber;
+    if (railNumber) railNumber.textContent = selectedNumber;
+    if (title) title.textContent = selected.dataset.title || "Project";
+    if (status) status.textContent = selected.dataset.status || "SELECTED PROJECT";
+    if (category) category.textContent = selected.dataset.category || "SYSTEM";
+    if (description) description.textContent = selected.dataset.description || "";
+
+    [screenLink, readoutLink].forEach((link) => {
+      if (!link) return;
+      link.href = selected.dataset.url || "#";
+      link.setAttribute("aria-label", `Open ${selected.dataset.title || "project"}`);
+    });
+
+    if (video && video.getAttribute("src") !== selected.dataset.video) {
+      const token = ++switchToken;
+      video.classList.add("is-switching");
+
+      window.setTimeout(() => {
+        if (token !== switchToken) return;
+        video.pause();
+        video.poster = selected.dataset.poster || "";
+        video.src = selected.dataset.video || "";
+        video.load();
+
+        const revealVideo = () => {
+          if (token !== switchToken) return;
+          video.classList.remove("is-switching");
+          if (!prefersReducedMotion) video.play().catch(() => {});
+        };
+
+        video.addEventListener("loadeddata", revealVideo, { once: true });
+        window.setTimeout(revealVideo, 900);
+      }, 190);
+    } else if (video && !prefersReducedMotion) {
+      video.play().catch(() => {});
+    }
+
+    if (focusButton) selected.focus();
   };
 
   buttons.forEach((button, index) => button.addEventListener("click", () => showProject(index)));
@@ -158,7 +205,24 @@ if (projectViewer) {
     showProject(activeIndex + (event.key === "ArrowRight" ? 1 : -1), true);
   });
 
-  showProject(0);
+  if (deckScene && deckShell && !prefersReducedMotion) {
+    deckScene.addEventListener("pointermove", (event) => {
+      const bounds = deckScene.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+      const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+      deckShell.style.setProperty("--deck-ry", `${x * 15 - 5}deg`);
+      deckShell.style.setProperty("--deck-rx", `${7 - y * 11}deg`);
+    });
+
+    deckScene.addEventListener("pointerleave", () => {
+      deckShell.style.removeProperty("--deck-ry");
+      deckShell.style.removeProperty("--deck-rx");
+    });
+  }
+
+  const requestedProject = Number.parseInt(new URLSearchParams(window.location.search).get("project") || "0", 10);
+  showProject(Number.isFinite(requestedProject) ? requestedProject : 0);
+  if (prefersReducedMotion) video?.pause();
 }
 
 const sessionOptions = [...document.querySelectorAll(".session-option")];

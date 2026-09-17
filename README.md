@@ -8,10 +8,12 @@ A responsive personal portfolio for Samiel Azmaien, a Georgia Tech computer scie
 ## Highlights
 
 - Cinematic monochrome landing page with a short system boot sequence
-- Interactive featured-project rail and career system log
+- Interactive handheld project deck with five cinematic video channels
 - Halftone, HUD, scanline, and parallax visual treatments
 - Paid-session selector connected to Stripe-backed Calendly events
 - Responsive layout, accessible controls, reduced-motion support, and invert mode
+
+Stock-footage sources and license links are documented in [`MEDIA_CREDITS.md`](./MEDIA_CREDITS.md).
 
 ## Technology
 
