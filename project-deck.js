@@ -245,7 +245,7 @@ if (canvas && shell) {
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
     camera.fov = width < 700 ? 29 : 27;
-    camera.position.z = width < 700 ? 24 : 23;
+    camera.position.z = width < 700 ? 17 : 23;
     camera.updateProjectionMatrix();
   };
 
