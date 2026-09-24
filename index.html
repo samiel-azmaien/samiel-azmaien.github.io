@@ -26,7 +26,7 @@
     <link rel="preload" href="./assets/models/sony-psp.glb?v=20260917-psp3" as="fetch" crossorigin />
     <link rel="modulepreload" href="./assets/vendor/three.module.min.js" />
     <link rel="modulepreload" href="./assets/vendor/addons/loaders/GLTFLoader.js" />
-    <link rel="stylesheet" href="./styles.css?v=20260923-field-log1" />
+    <link rel="stylesheet" href="./styles.css?v=20260923-field-log2" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -140,13 +140,13 @@
       <section class="field-log section-shell" id="field-log" aria-labelledby="field-log-title">
         <div class="section-bar reveal">
           <div>
-            <span class="section-index">SIDE CHANNEL / FIELD LOG</span>
-            <h2 id="field-log-title" class="pixel-title">Life between builds.</h2>
+            <span class="section-index">SIDE CHANNEL / ORIGIN → NOW</span>
+            <h2 id="field-log-title" class="pixel-title">The signal was always there.</h2>
           </div>
-          <p>Places, motion, and fragments from outside the terminal.</p>
+          <p>One early loop. Eight recent frames.</p>
         </div>
 
-        <div class="field-grid" aria-label="Personal field notes collage">
+        <div class="field-grid" role="group" aria-label="Personal field notes collage">
           <figure class="field-card field-card--origin field-card--video reveal">
             <video
               class="field-card__media"
@@ -157,61 +157,67 @@
               loop
               playsinline
               preload="metadata"
-              aria-label="Childhood video of Samiel in a playpen, recorded from a screen"
+              aria-label="Origin signal: childhood video of Samiel in a playpen, recorded from a screen"
             ></video>
             <button class="field-card__toggle" type="button" data-field-toggle aria-label="Play childhood field note video">PLAY</button>
-            <figcaption><span>LOOP_01</span> / ORIGIN SIGNAL</figcaption>
+            <div class="field-card__origin-mark" aria-hidden="true">
+              <span>ARCHIVE_00 / THEN</span>
+              <strong>THE FIRST<br />SIGNAL.</strong>
+            </div>
+            <figcaption><span>THEN_00</span> / ORIGIN SIGNAL</figcaption>
           </figure>
+
+          <div class="field-transition reveal" role="img" aria-label="Then to now: same curiosity, new scale">
+            <span>THEN</span>
+            <div class="field-transition__signal" aria-hidden="true"><i></i></div>
+            <span>NOW</span>
+            <p>SAME CURIOSITY / NEW SCALE</p>
+          </div>
 
           <figure class="field-card field-card--bridge field-card--wide field-card--night reveal">
             <img class="field-card__media" src="./assets/field-notes/02-night-bridge.webp" alt="Samiel in motion beside a lit bridge at night" loading="lazy" decoding="async" width="1024" height="768" />
-            <figcaption><span>FRAME_02</span> / NIGHT TRANSIT</figcaption>
+            <figcaption><span>NOW_01</span> / NIGHT TRANSIT</figcaption>
           </figure>
 
           <figure class="field-card field-card--city field-card--night reveal">
             <img class="field-card__media" src="./assets/field-notes/03-city-night.webp" alt="Samiel standing on a city street at night" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>FRAME_03</span> / CITY WALK</figcaption>
+            <figcaption><span>NOW_02</span> / CITY WALK</figcaption>
           </figure>
 
           <figure class="field-card field-card--mountain reveal">
             <img class="field-card__media" src="./assets/field-notes/01-ridgeline.webp" alt="Samiel standing on a mountain ridge in daylight" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>FRAME_01</span> / RIDGELINE</figcaption>
+            <figcaption><span>NOW_03</span> / RIDGELINE</figcaption>
           </figure>
 
           <figure class="field-card field-card--quiet field-card--night reveal">
             <img class="field-card__media" src="./assets/field-notes/04-after-hours.webp" alt="Samiel standing beneath a streetlamp at night" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>FRAME_04</span> / AFTER HOURS</figcaption>
+            <figcaption><span>NOW_04</span> / AFTER HOURS</figcaption>
           </figure>
 
           <figure class="field-card field-card--event field-card--cool reveal">
             <img class="field-card__media" src="./assets/field-notes/05-live-signal.webp" alt="Samiel walking through a crowded outdoor event at night" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>FRAME_05</span> / LIVE SIGNAL</figcaption>
+            <figcaption><span>NOW_05</span> / LIVE SIGNAL</figcaption>
           </figure>
 
           <figure class="field-card field-card--hollywood field-card--warm reveal">
             <img class="field-card__media" src="./assets/field-notes/06-hollywood.webp" alt="Samiel on a trail beneath the Hollywood sign" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>FRAME_06</span> / HOLLYWOOD</figcaption>
+            <figcaption><span>NOW_06</span> / HOLLYWOOD</figcaption>
           </figure>
 
           <figure class="field-card field-card--palace field-card--wide field-card--cool reveal">
             <img class="field-card__media" src="./assets/field-notes/07-blue-hour.webp" alt="Samiel beside a lagoon and illuminated arches at blue hour" loading="lazy" decoding="async" width="1024" height="768" />
-            <figcaption><span>FRAME_07</span> / BLUE HOUR</figcaption>
+            <figcaption><span>NOW_07</span> / BLUE HOUR</figcaption>
           </figure>
 
           <figure class="field-card field-card--temple reveal">
             <img class="field-card__media" src="./assets/field-notes/08-asakusa.webp" alt="Samiel visiting a temple complex in Japan" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>FRAME_08</span> / ASAKUSA</figcaption>
+            <figcaption><span>NOW_08</span> / ASAKUSA</figcaption>
           </figure>
 
-          <figure class="field-card field-card--island field-card--warm reveal">
-            <img class="field-card__media" src="./assets/field-notes/09-island.webp" alt="Samiel drinking juice at an outdoor island gathering" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>FRAME_09</span> / ISLAND LIGHT</figcaption>
-          </figure>
-
-          <div class="field-note reveal" aria-label="Field log summary">
-            <span>PERSONAL_ARCHIVE.LOG</span>
-            <strong>BETWEEN<br />BUILDS.</strong>
-            <p>09 STILLS · 01 LOOP · SIGNAL CONTINUES</p>
+          <div class="field-note reveal" role="note" aria-label="Field log summary">
+            <span>CURRENT_SIGNAL.LOG</span>
+            <strong>STILL<br />BECOMING.</strong>
+            <p>08 RECENT FRAMES · 01 ORIGIN LOOP</p>
           </div>
         </div>
       </section>
@@ -792,7 +798,7 @@
       <span>CPU <b data-telemetry-cpu>02.4%</b></span>
     </div>
 
-    <script src="./script.js?v=20260923-field-log1"></script>
-    <script type="module" src="./project-deck.js?v=20260923-field-log1"></script>
+    <script src="./script.js?v=20260923-field-log2"></script>
+    <script type="module" src="./project-deck.js?v=20260923-field-log2"></script>
   </body>
 </html>
