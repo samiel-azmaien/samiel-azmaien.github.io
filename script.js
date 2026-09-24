@@ -105,6 +105,74 @@ try {
 setInvert(savedInvert);
 setGrid(true);
 
+const fieldVideo = document.querySelector("[data-field-video]");
+const fieldToggle = document.querySelector("[data-field-toggle]");
+let fieldVideoPausedByUser = false;
+let fieldVideoInView = false;
+
+function updateFieldVideoControl() {
+  if (!fieldVideo || !fieldToggle) return;
+  const isPlaying = !fieldVideo.paused;
+  fieldToggle.textContent = isPlaying ? "PAUSE" : "PLAY";
+  fieldToggle.setAttribute("aria-label", `${isPlaying ? "Pause" : "Play"} childhood field note video`);
+}
+
+async function playFieldVideo() {
+  if (!fieldVideo || prefersReducedMotion || fieldVideoPausedByUser) return;
+  try {
+    await fieldVideo.play();
+  } catch (_) {
+    // Autoplay can be blocked; the visible play control remains available.
+  }
+  updateFieldVideoControl();
+}
+
+if (fieldVideo && fieldToggle) {
+  fieldToggle.addEventListener("click", async () => {
+    if (fieldVideo.paused) {
+      fieldVideoPausedByUser = false;
+      try {
+        await fieldVideo.play();
+      } catch (_) {
+        // The browser may still block playback until another interaction.
+      }
+    } else {
+      fieldVideoPausedByUser = true;
+      fieldVideo.pause();
+    }
+    updateFieldVideoControl();
+  });
+
+  fieldVideo.addEventListener("play", updateFieldVideoControl);
+  fieldVideo.addEventListener("pause", updateFieldVideoControl);
+  updateFieldVideoControl();
+
+  if ("IntersectionObserver" in window) {
+    const fieldVideoObserver = new IntersectionObserver(
+      ([entry]) => {
+        fieldVideoInView = entry.isIntersecting && entry.intersectionRatio >= 0.45;
+        if (fieldVideoInView) {
+          playFieldVideo();
+        } else {
+          fieldVideo.pause();
+          updateFieldVideoControl();
+        }
+      },
+      { threshold: [0, 0.45] }
+    );
+    fieldVideoObserver.observe(fieldVideo);
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      fieldVideo.pause();
+      updateFieldVideoControl();
+    } else if (fieldVideoInView) {
+      playFieldVideo();
+    }
+  });
+}
+
 invertButton?.addEventListener("click", () => setInvert(!document.body.classList.contains("is-inverted")));
 gridButton?.addEventListener("click", () => setGrid(document.body.classList.contains("grid-off")));
 

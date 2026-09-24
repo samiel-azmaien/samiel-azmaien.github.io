@@ -28,3 +28,7 @@ The model is used under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/
 - [three.js](https://threejs.org/) r160, MIT License
 
 No footage from Getty Images or iStock is bundled with this website.
+
+## Personal field log
+
+The photographs and childhood video in the field-log collage were supplied by Samiel Azmaien from his personal archive. They are included for portfolio use and are not licensed for reuse.
