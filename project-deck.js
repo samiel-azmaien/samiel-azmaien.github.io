@@ -47,11 +47,16 @@ if (canvas && shell) {
   let targetTiltX = 0;
   let targetTiltY = 0;
   let hoveredControl = null;
+  let pressedControlAction = null;
+  let pressedControlMesh = null;
+  const coarsePointer = window.matchMedia("(hover: none), (pointer: coarse)").matches;
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
   const interactiveControls = [];
   const controlActions = new Map([
+    [1, "previous"],
     [2, "next"],
+    [3, "next"],
     [4, "previous"],
     [5, "next"],
     [6, "next"],
@@ -118,10 +123,17 @@ if (canvas && shell) {
     screenContext.arc(862, 41, 7, 0, Math.PI * 2);
     screenContext.fill();
 
-    screenContext.strokeStyle = "rgba(223,255,0,.88)";
+    const openControlActive = hoveredControl?.userData.controlAction === "open" || pressedControlAction === "open";
     screenContext.lineWidth = 2;
-    screenContext.strokeRect(742, 132, 146, 42);
-    screenContext.fillStyle = "#dfff00";
+    if (openControlActive) {
+      screenContext.fillStyle = "#dfff00";
+      screenContext.fillRect(742, 132, 146, 42);
+      screenContext.fillStyle = "#050505";
+    } else {
+      screenContext.strokeStyle = "rgba(223,255,0,.88)";
+      screenContext.strokeRect(742, 132, 146, 42);
+      screenContext.fillStyle = "#dfff00";
+    }
     screenContext.font = "700 16px 'Space Mono', monospace";
     screenContext.textAlign = "center";
     screenContext.fillText("OPEN PROJECT ↗", 815, 144);
@@ -370,17 +382,68 @@ if (canvas && shell) {
     else delete canvas.dataset.cursor;
   });
 
+  const clearPressedControl = () => {
+    if (pressedControlMesh) {
+      restoreControl(pressedControlMesh);
+      if (pressedControlMesh === hoveredControl && pressedControlMesh.material?.emissive) {
+        pressedControlMesh.material.emissive.set(0xdfff00);
+        pressedControlMesh.material.emissiveIntensity = 0.75;
+      }
+    }
+    pressedControlAction = null;
+    pressedControlMesh = null;
+    delete canvas.dataset.pressed;
+  };
+
   canvas.addEventListener("pointerleave", () => {
+    if (pressedControlAction) return;
     highlightControl(null);
     delete canvas.dataset.cursor;
   });
 
-  canvas.addEventListener("pointerup", (event) => {
+  canvas.addEventListener("pointerdown", (event) => {
     const control = pickControl(event);
     const action = control?.userData.controlAction;
     if (!action) return;
     event.preventDefault();
-    projectViewer?.dispatchEvent(new CustomEvent("project-control", { detail: { action } }));
+    highlightControl(control);
+    pressedControlAction = action;
+    pressedControlMesh = control.userData.controlMesh || control;
+    canvas.dataset.pressed = action.toUpperCase();
+    if (pressedControlMesh.material?.emissive) {
+      pressedControlMesh.material.emissive.set(0xdfff00);
+      pressedControlMesh.material.emissiveIntensity = 1.45;
+    }
+    try {
+      canvas.setPointerCapture(event.pointerId);
+    } catch (_) {
+      // Pointer capture is optional; touch still receives the release handler.
+    }
+  });
+
+  canvas.addEventListener("pointerup", (event) => {
+    const control = pickControl(event);
+    const action = control?.userData.controlAction || pressedControlAction;
+    if (action) {
+      event.preventDefault();
+      projectViewer?.dispatchEvent(new CustomEvent("project-control", { detail: { action } }));
+    }
+    clearPressedControl();
+    try {
+      if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    } catch (_) {
+      // The pointer may already have been released by the browser.
+    }
+    if (coarsePointer) {
+      highlightControl(null);
+      delete canvas.dataset.cursor;
+    }
+  });
+
+  canvas.addEventListener("pointercancel", () => {
+    clearPressedControl();
+    highlightControl(null);
+    delete canvas.dataset.cursor;
   });
 
   shell.addEventListener("pointermove", (event) => {

@@ -80,7 +80,7 @@ const themeMeta = document.querySelector('meta[name="theme-color"]');
 const invertButton = document.querySelector("[data-invert]");
 const gridButton = document.querySelector("[data-grid]");
 
-function setInvert(enabled) {
+function applyInvertState(enabled) {
   document.body.classList.toggle("is-inverted", enabled);
   invertButton?.setAttribute("aria-pressed", String(enabled));
   if (themeMeta) themeMeta.content = enabled ? "#eeede7" : "#050505";
@@ -88,6 +88,61 @@ function setInvert(enabled) {
     sessionStorage.setItem("samiel-invert", enabled ? "1" : "0");
   } catch (_) {
     // Storage can be unavailable in private browser contexts.
+  }
+  window.dispatchEvent(new CustomEvent("samiel-themechange", { detail: { inverted: enabled } }));
+}
+
+function setInvert(enabled, options = {}) {
+  const {
+    animate = false,
+    x = window.innerWidth / 2,
+    y = window.innerHeight / 2,
+  } = options;
+  let hasApplied = false;
+  const apply = () => {
+    if (hasApplied) return;
+    hasApplied = true;
+    applyInvertState(enabled);
+  };
+
+  if (!animate || prefersReducedMotion || typeof document.startViewTransition !== "function") {
+    apply();
+    return;
+  }
+
+  const root = document.documentElement;
+  const radius = Math.hypot(
+    Math.max(x, window.innerWidth - x),
+    Math.max(y, window.innerHeight - y)
+  );
+  root.style.setProperty("--theme-x", `${x}px`);
+  root.style.setProperty("--theme-y", `${y}px`);
+  root.style.setProperty("--theme-radius", `${radius}px`);
+  root.dataset.themeTransition = enabled ? "to-light" : "to-dark";
+
+  const cleanup = () => {
+    delete root.dataset.themeTransition;
+    root.style.removeProperty("--theme-x");
+    root.style.removeProperty("--theme-y");
+    root.style.removeProperty("--theme-radius");
+  };
+
+  try {
+    const transition = document.startViewTransition(apply);
+    const applyFallback = window.setTimeout(apply, 120);
+    const cleanupFallback = window.setTimeout(() => {
+      apply();
+      cleanup();
+    }, 1400);
+    transition.finished.finally(() => {
+      window.clearTimeout(applyFallback);
+      window.clearTimeout(cleanupFallback);
+      apply();
+      cleanup();
+    });
+  } catch (_) {
+    apply();
+    cleanup();
   }
 }
 
@@ -173,7 +228,14 @@ if (fieldVideo && fieldToggle) {
   });
 }
 
-invertButton?.addEventListener("click", () => setInvert(!document.body.classList.contains("is-inverted")));
+invertButton?.addEventListener("click", (event) => {
+  const bounds = invertButton.getBoundingClientRect();
+  setInvert(!document.body.classList.contains("is-inverted"), {
+    animate: true,
+    x: event.clientX || bounds.left + bounds.width / 2,
+    y: event.clientY || bounds.top + bounds.height / 2,
+  });
+});
 gridButton?.addEventListener("click", () => setGrid(document.body.classList.contains("grid-off")));
 
 const parallaxStage = document.querySelector("[data-parallax-stage]");
@@ -288,9 +350,16 @@ if (projectViewer) {
   }, { once: true });
 
   projectViewer.addEventListener("keydown", (event) => {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    const directions = {
+      ArrowLeft: -1,
+      ArrowUp: -1,
+      ArrowRight: 1,
+      ArrowDown: 1,
+    };
+    const direction = directions[event.key];
+    if (!direction) return;
     event.preventDefault();
-    showProject(activeIndex + (event.key === "ArrowRight" ? 1 : -1), true);
+    showProject(activeIndex + direction, true);
   });
 
   if (deckScene && deckShell && !prefersReducedMotion) {
@@ -320,6 +389,193 @@ const pointerReadout = document.querySelector("[data-telemetry-pointer]");
 const telemetryView = document.querySelector("[data-telemetry-view]");
 const telemetryCpu = document.querySelector("[data-telemetry-cpu]");
 const hasFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+const capabilitiesCanvas = document.querySelector("[data-capabilities-field]");
+const capabilitiesStage = capabilitiesCanvas?.closest(".capabilities__visual");
+
+if (capabilitiesCanvas && capabilitiesStage && hasFinePointer && !prefersReducedMotion) {
+  const context = capabilitiesCanvas.getContext("2d", { alpha: true });
+  const pointer = { x: 0, y: 0, active: false };
+  let width = 0;
+  let height = 0;
+  let ratio = 1;
+  let points = [];
+  let frame = 0;
+  let lastMove = 0;
+  let isVisible = true;
+  let foreground = "#f2f0e9";
+  let accent = "#dfff00";
+
+  const readFieldColors = () => {
+    const styles = getComputedStyle(document.body);
+    foreground = styles.getPropertyValue("--fg").trim() || "#f2f0e9";
+    accent = styles.getPropertyValue("--acid").trim() || "#dfff00";
+  };
+
+  const queueFieldFrame = () => {
+    if (frame || !isVisible || document.hidden) return;
+    frame = requestAnimationFrame(drawField);
+  };
+
+  const rebuildField = () => {
+    const bounds = capabilitiesStage.getBoundingClientRect();
+    width = Math.max(1, Math.round(bounds.width));
+    height = Math.max(1, Math.round(bounds.height));
+    ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+    capabilitiesCanvas.width = Math.round(width * ratio);
+    capabilitiesCanvas.height = Math.round(height * ratio);
+    capabilitiesCanvas.style.width = `${width}px`;
+    capabilitiesCanvas.style.height = `${height}px`;
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    const spacing = Math.max(6, Math.min(9, width / 70));
+    const fields = [...capabilitiesStage.querySelectorAll(".disc")].map((disc, index) => {
+      const discBounds = disc.getBoundingClientRect();
+      return {
+        x: discBounds.left - bounds.left + discBounds.width / 2,
+        y: discBounds.top - bounds.top + discBounds.height / 2,
+        radius: Math.min(discBounds.width, discBounds.height) / 2,
+        opacity: index === 0 ? 0.95 : 0.42,
+      };
+    });
+    points = [];
+
+    fields.forEach((field, fieldIndex) => {
+      const startX = Math.max(0, field.x - field.radius);
+      const endX = Math.min(width, field.x + field.radius);
+      const startY = Math.max(0, field.y - field.radius);
+      const endY = Math.min(height, field.y + field.radius);
+      for (let y = startY; y <= endY; y += spacing) {
+        for (let x = startX; x <= endX; x += spacing) {
+          const dx = x - field.x;
+          const dy = y - field.y;
+          if (dx * dx + dy * dy > field.radius * field.radius) continue;
+          points.push({
+            x,
+            y,
+            opacity: field.opacity * (0.68 + ((Math.round(x / spacing) + Math.round(y / spacing)) % 3) * 0.12),
+            phase: (x * 0.031 + y * 0.017 + fieldIndex) % (Math.PI * 2),
+          });
+        }
+      }
+    });
+
+    capabilitiesStage.classList.add("is-fragment-ready");
+    readFieldColors();
+    queueFieldFrame();
+  };
+
+  function drawField(time = 0) {
+    frame = 0;
+    if (!isVisible || document.hidden) return;
+    context.clearRect(0, 0, width, height);
+    const elapsed = performance.now() - lastMove;
+    const radius = Math.max(120, Math.min(190, width * 0.34));
+    const shouldAnimate = pointer.active && elapsed < 720;
+
+    points.forEach((point) => {
+      let drawX = point.x;
+      let drawY = point.y;
+      let influence = 0;
+      let tangentX = 0;
+      let tangentY = 0;
+
+      if (pointer.active) {
+        const dx = point.x - pointer.x;
+        const dy = point.y - pointer.y;
+        const distance = Math.max(1, Math.hypot(dx, dy));
+        if (distance < radius) {
+          influence = Math.pow(1 - distance / radius, 2);
+          const pulse = Math.sin(distance * 0.075 - time * 0.012 + point.phase) * 14 * influence;
+          const twist = 58 * influence;
+          tangentX = (-dy / distance) * twist + (dx / distance) * pulse;
+          tangentY = (dx / distance) * twist + (dy / distance) * pulse;
+          drawX += tangentX;
+          drawY += tangentY;
+        }
+      }
+
+      context.globalAlpha = Math.min(1, point.opacity + influence * 0.22);
+      if (influence > 0.045) {
+        context.strokeStyle = influence > 0.55 ? accent : foreground;
+        context.lineWidth = influence > 0.55 ? 1.35 : 0.8;
+        context.beginPath();
+        context.moveTo(drawX - tangentX * 0.12, drawY - tangentY * 0.12);
+        context.lineTo(drawX + tangentX * 0.08, drawY + tangentY * 0.08);
+        context.stroke();
+      } else {
+        context.fillStyle = foreground;
+        const size = point.opacity > 0.7 ? 1.8 : 1.35;
+        context.fillRect(drawX - size / 2, drawY - size / 2, size, size);
+      }
+    });
+
+    context.globalAlpha = 1;
+    if (shouldAnimate) queueFieldFrame();
+  }
+
+  capabilitiesStage.addEventListener("pointerenter", (event) => {
+    pointer.active = true;
+    capabilitiesStage.classList.add("is-distorting");
+    lastMove = performance.now();
+    const bounds = capabilitiesStage.getBoundingClientRect();
+    pointer.x = event.clientX - bounds.left;
+    pointer.y = event.clientY - bounds.top;
+    queueFieldFrame();
+  });
+
+  capabilitiesStage.addEventListener("pointermove", (event) => {
+    const bounds = capabilitiesStage.getBoundingClientRect();
+    pointer.x = event.clientX - bounds.left;
+    pointer.y = event.clientY - bounds.top;
+    lastMove = performance.now();
+    capabilitiesStage.style.setProperty("--fragment-x", `${pointer.x}px`);
+    capabilitiesStage.style.setProperty("--fragment-y", `${pointer.y}px`);
+    queueFieldFrame();
+  }, { passive: true });
+
+  capabilitiesStage.addEventListener("pointerleave", () => {
+    pointer.active = false;
+    capabilitiesStage.classList.remove("is-distorting");
+    capabilitiesStage.style.removeProperty("--fragment-x");
+    capabilitiesStage.style.removeProperty("--fragment-y");
+    queueFieldFrame();
+  });
+
+  const fieldObserver = "IntersectionObserver" in window
+    ? new IntersectionObserver(([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) queueFieldFrame();
+        else if (frame) {
+          cancelAnimationFrame(frame);
+          frame = 0;
+        }
+      }, { rootMargin: "120px" })
+    : null;
+  fieldObserver?.observe(capabilitiesStage);
+
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(rebuildField).observe(capabilitiesStage);
+  } else {
+    window.addEventListener("resize", rebuildField, { passive: true });
+  }
+
+  window.addEventListener("samiel-themechange", () => {
+    readFieldColors();
+    queueFieldFrame();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && frame) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    } else {
+      queueFieldFrame();
+    }
+  });
+
+  rebuildField();
+}
 
 if (pointerCanvas && pointerCursor && hasFinePointer && !prefersReducedMotion) {
   const context = pointerCanvas.getContext("2d");
@@ -458,3 +714,208 @@ sessionOptions.forEach((option, index) => {
 
 const activeSession = document.querySelector(".session-option.is-active");
 if (activeSession) selectSession(activeSession);
+
+const commandPalette = document.querySelector("[data-command-palette]");
+const commandOpenButton = document.querySelector("[data-command-open]");
+const commandCloseButton = document.querySelector("[data-command-close]");
+const commandInput = document.querySelector("[data-command-input]");
+const commandList = document.querySelector("[data-command-list]");
+const commandCount = document.querySelector("[data-command-count]");
+
+if (commandPalette && commandOpenButton && commandInput && commandList) {
+  let filteredCommands = [];
+  let activeCommandIndex = 0;
+  let commandReturnFocus = null;
+
+  const goToSection = (selector) => {
+    const target = document.querySelector(selector);
+    if (!target) return;
+    try {
+      history.pushState(null, "", selector);
+    } catch (_) {
+      // Hash navigation still works when History API access is unavailable.
+    }
+    target.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+  };
+
+  const openExternal = (url) => {
+    const opened = window.open(url, "_blank", "noopener,noreferrer");
+    if (opened) opened.opener = null;
+  };
+
+  const commands = [
+    { label: "Go to featured projects", meta: "NAV", keywords: "work psp portfolio", run: () => goToSection("#work") },
+    { label: "Go to case studies", meta: "NAV", keywords: "projects build stories", run: () => goToSection("#case-studies") },
+    { label: "Go to field log", meta: "NAV", keywords: "photos origin now collage", run: () => goToSection("#field-log") },
+    { label: "Go to system log", meta: "NAV", keywords: "experience work anthropic totem aws", run: () => goToSection("#log") },
+    { label: "Go to technical toolkit", meta: "NAV", keywords: "skills stack aws python pytorch java", run: () => goToSection("#skills") },
+    { label: "Go to office hours", meta: "NAV", keywords: "book meeting calendly session", run: () => goToSection("#book") },
+    { label: "Go to contact", meta: "NAV", keywords: "email social links", run: () => goToSection("#contact") },
+    { label: "Open Totem case study", meta: "PROJECT", keywords: "ceo agent identity startup", run: () => goToSection("#project-totem") },
+    { label: "Open GPU–HBM case study", meta: "PROJECT", keywords: "patent research caching markov", run: () => goToSection("#project-gpu") },
+    { label: "Open FND MRI case study", meta: "PROJECT", keywords: "research medical machine learning", run: () => goToSection("#project-fnd") },
+    { label: "Open swing-state case study", meta: "PROJECT", keywords: "data election geospatial", run: () => goToSection("#project-data") },
+    { label: "Open Andromeda case study", meta: "PROJECT", keywords: "hacklanta prediction markets", run: () => goToSection("#project-andromeda") },
+    { label: "Open GitHub", meta: "EXTERNAL ↗", keywords: "code repositories", run: () => openExternal("https://github.com/samiel-azmaien") },
+    { label: "Open LinkedIn", meta: "EXTERNAL ↗", keywords: "professional social", run: () => openExternal("https://www.linkedin.com/in/samiel-azmaien/") },
+    { label: "Open ORCID", meta: "EXTERNAL ↗", keywords: "research papers publications", run: () => openExternal("https://orcid.org/0009-0008-3724-7310") },
+    {
+      label: "Invert interface",
+      meta: "SETTING",
+      keywords: "theme dark light contrast ripple",
+      run: () => setInvert(!document.body.classList.contains("is-inverted"), {
+        animate: true,
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      }),
+    },
+    {
+      label: "Toggle grid texture",
+      meta: "SETTING",
+      keywords: "scanlines grain display overlay",
+      run: () => setGrid(document.body.classList.contains("grid-off")),
+    },
+  ];
+
+  const setActiveCommand = (index, scroll = true) => {
+    if (!filteredCommands.length) {
+      activeCommandIndex = 0;
+      commandInput.removeAttribute("aria-activedescendant");
+      return;
+    }
+    activeCommandIndex = (index + filteredCommands.length) % filteredCommands.length;
+    const options = [...commandList.querySelectorAll("[role='option']")];
+    options.forEach((option, optionIndex) => {
+      const isActive = optionIndex === activeCommandIndex;
+      option.classList.toggle("is-active", isActive);
+      option.setAttribute("aria-selected", String(isActive));
+      if (isActive) {
+        commandInput.setAttribute("aria-activedescendant", option.id);
+        if (scroll) option.scrollIntoView({ block: "nearest" });
+      }
+    });
+  };
+
+  const renderCommands = (query = "") => {
+    const normalized = query.trim().toLowerCase();
+    filteredCommands = commands.filter((command) =>
+      `${command.label} ${command.meta} ${command.keywords}`.toLowerCase().includes(normalized)
+    );
+    activeCommandIndex = 0;
+    commandList.replaceChildren();
+
+    if (!filteredCommands.length) {
+      const empty = document.createElement("li");
+      empty.className = "command-palette__empty";
+      empty.textContent = "NO MATCHING COMMANDS";
+      empty.setAttribute("role", "presentation");
+      commandList.append(empty);
+      commandInput.removeAttribute("aria-activedescendant");
+    } else {
+      filteredCommands.forEach((command, index) => {
+        const option = document.createElement("li");
+        option.id = `command-option-${index}`;
+        option.className = "command-palette__option";
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected", String(index === 0));
+        option.dataset.commandIndex = String(index);
+
+        const label = document.createElement("span");
+        label.textContent = command.label;
+        const meta = document.createElement("small");
+        meta.textContent = command.meta;
+        option.append(label, meta);
+        commandList.append(option);
+      });
+      setActiveCommand(0, false);
+    }
+
+    if (commandCount) {
+      commandCount.textContent = `${String(filteredCommands.length).padStart(2, "0")} ${filteredCommands.length === 1 ? "COMMAND" : "COMMANDS"}`;
+    }
+  };
+
+  const closeCommandPalette = () => {
+    if (!commandPalette.open) return;
+    commandPalette.close();
+  };
+
+  const executeCommand = (index = activeCommandIndex) => {
+    const command = filteredCommands[index];
+    if (!command) return;
+    closeCommandPalette();
+    if (command.meta.startsWith("EXTERNAL")) command.run();
+    else requestAnimationFrame(() => command.run());
+  };
+
+  const openCommandPalette = () => {
+    if (commandPalette.open) {
+      commandInput.focus();
+      return;
+    }
+    commandReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : commandOpenButton;
+    commandInput.value = "";
+    renderCommands();
+    commandOpenButton.setAttribute("aria-expanded", "true");
+    commandInput.setAttribute("aria-expanded", "true");
+    if (typeof commandPalette.showModal === "function") commandPalette.showModal();
+    else commandPalette.setAttribute("open", "");
+    const focusCommandInput = () => commandInput.focus({ preventScroll: true });
+    focusCommandInput();
+    requestAnimationFrame(focusCommandInput);
+    window.setTimeout(focusCommandInput, 0);
+  };
+
+  commandOpenButton.setAttribute("aria-expanded", "false");
+  commandOpenButton.addEventListener("click", openCommandPalette);
+  commandCloseButton?.addEventListener("click", closeCommandPalette);
+
+  commandPalette.addEventListener("click", (event) => {
+    if (event.target === commandPalette) closeCommandPalette();
+  });
+
+  commandPalette.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeCommandPalette();
+  });
+
+  commandPalette.addEventListener("close", () => {
+    commandOpenButton.setAttribute("aria-expanded", "false");
+    commandInput.setAttribute("aria-expanded", "false");
+    commandInput.removeAttribute("aria-activedescendant");
+    commandReturnFocus?.focus();
+  });
+
+  commandInput.addEventListener("input", () => renderCommands(commandInput.value));
+  commandInput.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveCommand(activeCommandIndex + (event.key === "ArrowDown" ? 1 : -1));
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      executeCommand();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      closeCommandPalette();
+    }
+  });
+
+  commandList.addEventListener("pointermove", (event) => {
+    const option = event.target.closest("[data-command-index]");
+    if (!option) return;
+    setActiveCommand(Number(option.dataset.commandIndex), false);
+  });
+
+  commandList.addEventListener("click", (event) => {
+    const option = event.target.closest("[data-command-index]");
+    if (!option) return;
+    executeCommand(Number(option.dataset.commandIndex));
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      openCommandPalette();
+    }
+  });
+}

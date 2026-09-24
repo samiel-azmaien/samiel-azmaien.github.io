@@ -26,7 +26,7 @@
     <link rel="preload" href="./assets/models/sony-psp.glb?v=20260917-psp3" as="fetch" crossorigin />
     <link rel="modulepreload" href="./assets/vendor/three.module.min.js" />
     <link rel="modulepreload" href="./assets/vendor/addons/loaders/GLTFLoader.js" />
-    <link rel="stylesheet" href="./styles.css?v=20260923-field-log2" />
+    <link rel="stylesheet" href="./styles.css?v=20260924-interactions1" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -383,7 +383,7 @@
             <div class="case-study__grid">
               <div>
                 <span>My contribution</span>
-                <p>As a collaborator, I am helping define the product and protocol: the claims an agent presents, the request-scoped checks a receiving company evaluates, and the auditable receipt produced after verification. My focus is turning a security idea into an integration flow another team can understand and test.</p>
+                <p>As CEO, I am helping define the product and protocol: the claims an agent presents, the request-scoped checks a receiving company evaluates, and the auditable receipt produced after verification. My focus is turning a security idea into an integration flow another team can understand and test.</p>
               </div>
               <div>
                 <span>The hard part</span>
@@ -586,7 +586,7 @@
             <div>
               <p class="log-entry__tag">AGENT IDENTITY / STARTUP</p>
               <h3>Totem</h3>
-              <h4>Collaborator</h4>
+              <h4>CEO</h4>
               <p>
                 Building an agent-native identity and authorization platform that binds organizational representation and current authority to each cross-company request.
               </p>
@@ -647,11 +647,13 @@
         </div>
       </section>
 
-      <section class="capabilities section-shell" aria-labelledby="capabilities-title">
+      <section class="capabilities section-shell" id="skills" aria-labelledby="capabilities-title">
         <div class="capabilities__visual reveal" aria-hidden="true">
+          <canvas class="capabilities__field" data-capabilities-field></canvas>
           <div class="disc disc--a"></div>
           <div class="disc disc--b"></div>
           <div class="capabilities__crosshair">+</div>
+          <span class="capabilities__hint">HOVER / DISTORT</span>
         </div>
         <div class="capabilities__copy reveal">
           <span class="section-index">04 / TOOLKIT</span>
@@ -790,6 +792,7 @@
     <div class="display-controls" aria-label="Display controls">
       <button type="button" data-invert>invert</button>
       <button type="button" data-grid>grid on/off</button>
+      <button type="button" data-command-open aria-haspopup="dialog" aria-controls="command-palette" aria-keyshortcuts="Meta+K Control+K">cmd+k</button>
     </div>
 
     <div class="system-telemetry" aria-hidden="true">
@@ -798,7 +801,24 @@
       <span>CPU <b data-telemetry-cpu>02.4%</b></span>
     </div>
 
-    <script src="./script.js?v=20260923-field-log2"></script>
-    <script type="module" src="./project-deck.js?v=20260923-field-log2"></script>
+    <dialog class="command-palette" id="command-palette" data-command-palette aria-labelledby="command-palette-title" aria-describedby="command-palette-help">
+      <div class="command-palette__panel">
+        <header class="command-palette__header">
+          <strong id="command-palette-title">SYS / COMMAND INDEX</strong>
+          <button type="button" data-command-close aria-label="Close command palette">ESC</button>
+        </header>
+        <label class="visually-hidden" for="command-palette-input">Search commands</label>
+        <div class="command-palette__search">
+          <span aria-hidden="true">&gt;_</span>
+          <input id="command-palette-input" type="search" data-command-input autocomplete="off" spellcheck="false" placeholder="Search pages, projects, links, or settings…" role="combobox" aria-autocomplete="list" aria-controls="command-palette-results" aria-expanded="false" />
+        </div>
+        <div class="command-palette__status"><span>READY</span><p data-command-count aria-live="polite"></p></div>
+        <ul class="command-palette__list" id="command-palette-results" data-command-list role="listbox" aria-label="Available commands"></ul>
+        <p class="command-palette__help" id="command-palette-help">↑↓ NAVIGATE&nbsp;&nbsp; ENTER EXECUTE&nbsp;&nbsp; ESC CLOSE</p>
+      </div>
+    </dialog>
+
+    <script src="./script.js?v=20260924-interactions1"></script>
+    <script type="module" src="./project-deck.js?v=20260924-interactions1"></script>
   </body>
 </html>
