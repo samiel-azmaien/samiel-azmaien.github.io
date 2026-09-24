@@ -26,7 +26,7 @@
     <link rel="preload" href="./assets/models/sony-psp.glb?v=20260917-psp3" as="fetch" crossorigin />
     <link rel="modulepreload" href="./assets/vendor/three.module.min.js" />
     <link rel="modulepreload" href="./assets/vendor/addons/loaders/GLTFLoader.js" />
-    <link rel="stylesheet" href="./styles.css?v=20260917-psp3" />
+    <link rel="stylesheet" href="./styles.css?v=20260923-build-stories1" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -49,8 +49,8 @@
       </a>
       <nav class="nav" aria-label="Primary navigation">
         <a href="#work">Work</a>
-        <a href="#log">Log</a>
-        <a href="#book">Book</a>
+        <a href="#case-studies">Build notes</a>
+        <a href="#log">Experience</a>
         <a href="#contact">Contact</a>
       </nav>
       <div class="header-status" aria-label="Current status">
@@ -94,7 +94,7 @@
 
         <div class="hero__footer reveal">
           <p>
-            Building search infrastructure, post-training evaluation workflows, and trust layers for autonomous agents.
+            I build AI infrastructure, research systems, and products—then document the decisions, failures, and results behind them.
           </p>
           <div class="hero__links" aria-label="Profile links">
             <a href="mailto:samiel@totemlayer.com">Email ↗</a>
@@ -141,9 +141,9 @@
         <div class="section-bar reveal">
           <div>
             <span class="section-index">01 / 05</span>
-            <h2 id="work-title" class="pixel-title">Featured systems</h2>
+            <h2 id="work-title" class="pixel-title">Project index</h2>
           </div>
-          <p>Selected projects, research, and shipped experiments.</p>
+          <p>Use the PSP controls to browse five builds, then open the case files below for the full story.</p>
         </div>
 
         <div class="project-viewer reveal" data-project-viewer>
@@ -271,10 +271,211 @@
         </div>
       </section>
 
+      <section class="case-studies section-shell" id="case-studies" aria-labelledby="case-studies-title">
+        <div class="section-bar reveal">
+          <div>
+            <span class="section-index">02 / CASE FILES</span>
+            <h2 id="case-studies-title" class="pixel-title">What I built.</h2>
+          </div>
+          <p>My contribution, the hard part, what changed in my thinking, and the result.</p>
+        </div>
+
+        <div class="case-list">
+          <article class="case-study reveal" id="project-totem">
+            <header class="case-study__header">
+              <div>
+                <span class="case-study__number">01</span>
+                <p class="case-study__eyebrow">ACTIVE COLLABORATION / AGENT IDENTITY</p>
+                <h3>Totem</h3>
+              </div>
+              <div class="case-study__links" aria-label="Totem links">
+                <a href="https://totemlayer.com/" target="_blank" rel="noreferrer">Website ↗</a>
+              </div>
+            </header>
+            <p class="case-study__summary">
+              A cross-company identity and authorization layer for AI agents: prove who an agent represents, what it is allowed to do now, and preserve evidence for the exact request.
+            </p>
+            <div class="case-study__grid">
+              <div>
+                <span>My contribution</span>
+                <p>As a collaborator, I am helping define the product and protocol: the claims an agent presents, the request-scoped checks a receiving company evaluates, and the auditable receipt produced after verification. My focus is turning a security idea into an integration flow another team can understand and test.</p>
+              </div>
+              <div>
+                <span>The hard part</span>
+                <p>Identity alone is insufficient. The system has to bind organizational representation and current authority to one action without falling back to broad, long-lived credentials.</p>
+              </div>
+              <div>
+                <span>What I learned</span>
+                <p>Authorization is temporal and contextual. A useful trust protocol must make failure states, evidence, and revocation as explicit as the happy path.</p>
+              </div>
+              <div>
+                <span>Result / traction</span>
+                <p>Totem qualified for EF Start and SHI. The work is ongoing, with the current phase focused on narrowing the protocol and validating the problem with potential users.</p>
+              </div>
+            </div>
+            <ul class="case-study__stack" aria-label="Totem focus areas">
+              <li>Agent identity</li><li>Authorization</li><li>Protocol design</li><li>Security UX</li>
+            </ul>
+          </article>
+
+          <article class="case-study reveal" id="project-gpu">
+            <header class="case-study__header">
+              <div>
+                <span class="case-study__number">02</span>
+                <p class="case-study__eyebrow">RESEARCH / GPU MEMORY SYSTEMS</p>
+                <h3>GPU–HBM Predictive Caching</h3>
+              </div>
+              <div class="case-study__links" aria-label="GPU predictive caching links">
+                <a href="https://github.com/samiel-azmaien/gpu-hbm-predictive-caching" target="_blank" rel="noreferrer">Repository ↗</a>
+                <a href="https://doi.org/10.35940/ijsce.F3700.15060126" target="_blank" rel="noreferrer">Paper ↗</a>
+                <a href="https://isef.net/project/soft022t-optimizing-gpu-architecture-markov-based-caching" target="_blank" rel="noreferrer">ISEF ↗</a>
+              </div>
+            </header>
+            <p class="case-study__summary">
+              A predictive memory-controller concept that learns memory-block transitions with a Markov chain, validates them with a neural network, and uses quantization and pruning to keep the predictor lightweight.
+            </p>
+            <div class="case-study__grid">
+              <div>
+                <span>My contribution</span>
+                <p>I co-developed the original ISEF research project, designed the predictive-caching methodology and experiments, and later turned the work into a sole-authored journal article. I am also a co-inventor on the granted patent covering the GPU project.</p>
+              </div>
+              <div>
+                <span>The hard part</span>
+                <p>A predictor can erase its own benefit if inference and memory overhead are too high. I had to treat model compression, prediction quality, and transfer latency as one systems problem rather than separate metrics.</p>
+              </div>
+              <div>
+                <span>What I learned</span>
+                <p>Systems research is only persuasive when the benchmark, simulator assumptions, and available artifacts are stated plainly. The public repository therefore distinguishes the publication record from a complete reproduction package.</p>
+              </div>
+              <div>
+                <span>Result / traction</span>
+                <p>The paper reports an 85% L1 cache hit rate, 40% lower memory overhead, and 25% faster data transfer. It was published in IJSCE in January 2026, grew from a Regeneron ISEF project, and resulted in a granted patent.</p>
+              </div>
+            </div>
+            <ul class="case-study__stack" aria-label="GPU predictive caching technologies">
+              <li>Markov chains</li><li>Neural networks</li><li>Quantization</li><li>Pruning</li><li>GPU architecture</li>
+            </ul>
+          </article>
+
+          <article class="case-study reveal" id="project-fnd">
+            <header class="case-study__header">
+              <div>
+                <span class="case-study__number">03</span>
+                <p class="case-study__eyebrow">PUBLISHED RESEARCH / RESPONSIBLE ML</p>
+                <h3>FND MRI Classification</h3>
+              </div>
+              <div class="case-study__links" aria-label="FND research links">
+                <a href="https://github.com/samiel-azmaien/Neural-Network-Analysis-of-MRI-Scans-for-FND-Diagnosis" target="_blank" rel="noreferrer">Repository ↗</a>
+                <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4997415" target="_blank" rel="noreferrer">Manuscript ↗</a>
+              </div>
+            </header>
+            <p class="case-study__summary">
+              A research prototype testing whether tabular MRI-derived quality metrics could help distinguish neurological-disorder and Functional Neurological Disorder cases.
+            </p>
+            <div class="case-study__grid">
+              <div>
+                <span>My contribution</span>
+                <p>I prepared and standardized the tabular feature pipeline, trained logistic-regression and two-hidden-layer dense-network baselines, generated classification metrics and plots, and documented the work in the accompanying manuscript.</p>
+              </div>
+              <div>
+                <span>The hard part</span>
+                <p>The public sample is extremely small and does not reproduce the larger experiment described in the paper. The key challenge became separating an exploratory research result from a claim that could be interpreted as clinical validation.</p>
+              </div>
+              <div>
+                <span>What I learned</span>
+                <p>Medical ML needs patient-independent splits, provenance, calibrated baselines, confidence intervals, and error analysis before accuracy is meaningful. A limitation stated clearly is more useful than a headline metric without context.</p>
+              </div>
+              <div>
+                <span>Result / status</span>
+                <p>The manuscript and code are public, but the project is labeled research-only—not a medical device or diagnostic tool. The repository documents which results are and are not reproducible from the released sample.</p>
+              </div>
+            </div>
+            <ul class="case-study__stack" aria-label="FND research technologies">
+              <li>Python</li><li>scikit-learn</li><li>Dense neural nets</li><li>ROC–AUC</li><li>Responsible ML</li>
+            </ul>
+          </article>
+
+          <article class="case-study reveal" id="project-data">
+            <header class="case-study__header">
+              <div>
+                <span class="case-study__number">04</span>
+                <p class="case-study__eyebrow">DATA SCIENCE / GEOSPATIAL ANALYSIS</p>
+                <h3>Swing-State Probabilities</h3>
+              </div>
+              <div class="case-study__links" aria-label="Election analysis links">
+                <a href="https://github.com/samiel-azmaien/datascience25" target="_blank" rel="noreferrer">Repository ↗</a>
+              </div>
+            </header>
+            <p class="case-study__summary">
+              An exploratory analysis of 2020–2024 election results that maps transparent, precinct-level swing scores across Gwinnett County.
+            </p>
+            <div class="case-study__grid">
+              <div>
+                <span>My contribution</span>
+                <p>I built the Jupyter workflow for data preparation, regression experiments, sigmoid-based scoring, and raster/geospatial visualization, then recorded the process in a 34-page development logbook.</p>
+              </div>
+              <div>
+                <span>The hard part</span>
+                <p>Election tables, precinct geography, and Colab-hosted files did not share a clean schema or reproducible path structure. I also had to avoid presenting a heuristic score as a calibrated forecast.</p>
+              </div>
+              <div>
+                <span>What I learned</span>
+                <p>A polished map can hide weak methodology. Reproducible inputs, independent labels, train/test design, and plain-language interpretation matter as much as the model.</p>
+              </div>
+              <div>
+                <span>Result / status</span>
+                <p>The notebooks and full logbook are public. The repository explicitly labels the output as exploratory and lists the data, environment, and validation work required for a reproducible release.</p>
+              </div>
+            </div>
+            <ul class="case-study__stack" aria-label="Election analysis technologies">
+              <li>pandas</li><li>GeoPandas</li><li>Rasterio</li><li>TensorFlow</li><li>Jupyter</li>
+            </ul>
+          </article>
+
+          <article class="case-study reveal case-study--archive" id="project-andromeda">
+            <header class="case-study__header">
+              <div>
+                <span class="case-study__number">05</span>
+                <p class="case-study__eyebrow">CONCLUDED / HACKLANTA 2026</p>
+                <h3>Andromeda</h3>
+              </div>
+              <div class="case-study__links" aria-label="Andromeda links">
+                <a href="https://andromeda-neon-six.vercel.app/" target="_blank" rel="noreferrer">Demo ↗</a>
+                <a href="https://github.com/samiel-azmaien/andromeda-hacklanta-2026" target="_blank" rel="noreferrer">Archive ↗</a>
+              </div>
+            </header>
+            <p class="case-study__summary">
+              A four-person Hacklanta prototype exploring how prediction-market data could become clearer research signals, paper-trading workflows, and strategy tests.
+            </p>
+            <div class="case-study__grid">
+              <div>
+                <span>My contribution</span>
+                <p>As one member of the four-person team, I helped shape and ship the browser prototype that combined market views, probability-driven analysis, paper trading, and strategy exploration. I now maintain the public project record.</p>
+              </div>
+              <div>
+                <span>The hard part</span>
+                <p>Prediction markets change quickly, so the interface had to make uncertain signals understandable without implying certainty or live financial advice. Team ownership also meant respecting the boundary around the private source repository.</p>
+              </div>
+              <div>
+                <span>What I learned</span>
+                <p>Fast team projects need explicit ownership, provenance, and lifecycle labels. A good archive can preserve the work without misrepresenting who owns the implementation or whether a product is still active.</p>
+              </div>
+              <div>
+                <span>Result / status</span>
+                <p>The public frontend remains available as a portfolio artifact. Andromeda is concluded; backend-dependent actions may be unavailable, and the archive intentionally contains no private team source.</p>
+              </div>
+            </div>
+            <ul class="case-study__stack" aria-label="Andromeda focus areas">
+              <li>Prediction markets</li><li>Paper trading</li><li>Team prototype</li><li>Product UX</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
       <section class="system-log section-shell" id="log" aria-labelledby="log-title">
         <div class="section-bar reveal">
           <div>
-            <span class="section-index">02 / TRACE</span>
+            <span class="section-index">03 / TRACE</span>
             <h2 id="log-title" class="pixel-title">System log</h2>
           </div>
           <p>Experience, research, and operating context.</p>
@@ -368,7 +569,7 @@
           <div class="capabilities__crosshair">+</div>
         </div>
         <div class="capabilities__copy reveal">
-          <span class="section-index">03 / TOOLKIT</span>
+          <span class="section-index">04 / TOOLKIT</span>
           <h2 id="capabilities-title" class="pixel-title">Full-stack,<br />but systems-first.</h2>
           <div class="capability-row">
             <span>Systems &amp; data</span>
@@ -387,7 +588,7 @@
 
       <section class="booking section-shell" id="book" aria-labelledby="booking-title">
         <div class="booking__intro reveal">
-          <span class="section-index">04 / OFFICE HOURS</span>
+          <span class="section-index">05 / OFFICE HOURS</span>
           <h2 id="booking-title" class="pixel-title">Bring a hard problem.</h2>
           <p>
             Book a private working session for an architecture decision, research direction, portfolio review, or early-stage product problem. Payment and scheduling are secured by Stripe + Calendly.
@@ -512,7 +713,7 @@
       <span>CPU <b data-telemetry-cpu>02.4%</b></span>
     </div>
 
-    <script src="./script.js?v=20260917-psp4"></script>
-    <script type="module" src="./project-deck.js?v=20260917-psp6"></script>
+    <script src="./script.js?v=20260923-build-stories1"></script>
+    <script type="module" src="./project-deck.js?v=20260923-build-stories1"></script>
   </body>
 </html>
