@@ -11,7 +11,6 @@ const projectNumber = document.querySelector("[data-project-number]");
 const projectCategory = document.querySelector("[data-project-category]");
 const projectTitle = document.querySelector("[data-project-title]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const canTilt = window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion;
 
 if (canvas && shell) {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
@@ -44,8 +43,18 @@ if (canvas && shell) {
   let modelReady = false;
   let screenMesh = null;
   let screenTexture = null;
-  let targetTiltX = 0;
-  let targetTiltY = 0;
+  let targetRotationX = 0;
+  let targetRotationY = 0;
+  let orbitVelocityX = 0;
+  let orbitVelocityY = 0;
+  let orbitPointerId = null;
+  let orbitStartX = 0;
+  let orbitStartY = 0;
+  let orbitBaseRotationX = 0;
+  let orbitBaseRotationY = 0;
+  let orbitLastX = 0;
+  let orbitLastY = 0;
+  let orbitDragging = false;
   let hoveredControl = null;
   let pressedControlAction = null;
   let pressedControlMesh = null;
@@ -376,6 +385,30 @@ if (canvas && shell) {
   };
 
   canvas.addEventListener("pointermove", (event) => {
+    if (event.pointerId === orbitPointerId) {
+      const totalX = event.clientX - orbitStartX;
+      const totalY = event.clientY - orbitStartY;
+      if (!orbitDragging && Math.hypot(totalX, totalY) > 6) {
+        orbitDragging = true;
+        clearPressedControl();
+        highlightControl(null);
+        delete canvas.dataset.cursor;
+        canvas.dataset.orbiting = "";
+      }
+      if (orbitDragging) {
+        event.preventDefault();
+        const deltaX = event.clientX - orbitLastX;
+        const deltaY = event.clientY - orbitLastY;
+        orbitVelocityY = THREE.MathUtils.clamp(deltaX * 0.007, -0.045, 0.045);
+        orbitVelocityX = THREE.MathUtils.clamp(deltaY * 0.005, -0.035, 0.035);
+        targetRotationY = orbitBaseRotationY + totalX * 0.007;
+        targetRotationX = THREE.MathUtils.clamp(orbitBaseRotationX + totalY * 0.005, -0.72, 0.72);
+        canvas.dataset.rotation = targetRotationY.toFixed(2);
+        orbitLastX = event.clientX;
+        orbitLastY = event.clientY;
+        return;
+      }
+    }
     const control = pickControl(event);
     highlightControl(control);
     if (control) canvas.dataset.cursor = control.userData.controlAction.toUpperCase();
@@ -396,7 +429,7 @@ if (canvas && shell) {
   };
 
   canvas.addEventListener("pointerleave", () => {
-    if (pressedControlAction) return;
+    if (pressedControlAction || orbitPointerId !== null) return;
     highlightControl(null);
     delete canvas.dataset.cursor;
   });
@@ -404,15 +437,24 @@ if (canvas && shell) {
   canvas.addEventListener("pointerdown", (event) => {
     const control = pickControl(event);
     const action = control?.userData.controlAction;
-    if (!action) return;
     event.preventDefault();
-    highlightControl(control);
-    pressedControlAction = action;
-    pressedControlMesh = control.userData.controlMesh || control;
-    canvas.dataset.pressed = action.toUpperCase();
-    if (pressedControlMesh.material?.emissive) {
-      pressedControlMesh.material.emissive.set(0xdfff00);
-      pressedControlMesh.material.emissiveIntensity = 1.45;
+    orbitPointerId = event.pointerId;
+    orbitStartX = orbitLastX = event.clientX;
+    orbitStartY = orbitLastY = event.clientY;
+    orbitBaseRotationX = targetRotationX;
+    orbitBaseRotationY = targetRotationY;
+    orbitDragging = false;
+    orbitVelocityX = 0;
+    orbitVelocityY = 0;
+    if (action) {
+      highlightControl(control);
+      pressedControlAction = action;
+      pressedControlMesh = control.userData.controlMesh || control;
+      canvas.dataset.pressed = action.toUpperCase();
+      if (pressedControlMesh.material?.emissive) {
+        pressedControlMesh.material.emissive.set(0xdfff00);
+        pressedControlMesh.material.emissiveIntensity = 1.45;
+      }
     }
     try {
       canvas.setPointerCapture(event.pointerId);
@@ -423,11 +465,14 @@ if (canvas && shell) {
 
   canvas.addEventListener("pointerup", (event) => {
     const control = pickControl(event);
-    const action = control?.userData.controlAction || pressedControlAction;
-    if (action) {
+    const action = orbitDragging ? null : (control?.userData.controlAction || pressedControlAction);
+    if (action && event.pointerId === orbitPointerId) {
       event.preventDefault();
       projectViewer?.dispatchEvent(new CustomEvent("project-control", { detail: { action } }));
     }
+    orbitPointerId = null;
+    orbitDragging = false;
+    delete canvas.dataset.orbiting;
     clearPressedControl();
     try {
       if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
@@ -441,21 +486,23 @@ if (canvas && shell) {
   });
 
   canvas.addEventListener("pointercancel", () => {
+    orbitPointerId = null;
+    orbitDragging = false;
+    orbitVelocityX = 0;
+    orbitVelocityY = 0;
+    delete canvas.dataset.orbiting;
     clearPressedControl();
     highlightControl(null);
     delete canvas.dataset.cursor;
   });
 
-  shell.addEventListener("pointermove", (event) => {
-    if (!canTilt) return;
-    const bounds = shell.getBoundingClientRect();
-    targetTiltY = ((event.clientX - bounds.left) / bounds.width - 0.5) * 0.18;
-    targetTiltX = ((event.clientY - bounds.top) / bounds.height - 0.5) * -0.1;
-  });
-
-  shell.addEventListener("pointerleave", () => {
-    targetTiltX = 0;
-    targetTiltY = 0;
+  canvas.addEventListener("dblclick", (event) => {
+    if (pickControl(event)) return;
+    targetRotationX = 0;
+    targetRotationY = 0;
+    orbitVelocityX = 0;
+    orbitVelocityY = 0;
+    canvas.dataset.rotation = "0.00";
   });
 
   const clock = new THREE.Clock();
@@ -464,8 +511,17 @@ if (canvas && shell) {
     requestAnimationFrame(render);
     const time = clock.getElapsedTime();
     if (modelReady) {
-      rig.rotation.x += (targetTiltX - rig.rotation.x) * 0.07;
-      rig.rotation.y += (targetTiltY - rig.rotation.y) * 0.07;
+      if (!orbitDragging && !reduceMotion) {
+        targetRotationY += orbitVelocityY;
+        targetRotationX = THREE.MathUtils.clamp(targetRotationX + orbitVelocityX, -0.72, 0.72);
+        orbitVelocityX *= 0.91;
+        orbitVelocityY *= 0.91;
+        if (Math.abs(orbitVelocityX) < 0.0001) orbitVelocityX = 0;
+        if (Math.abs(orbitVelocityY) < 0.0001) orbitVelocityY = 0;
+        if (orbitVelocityX || orbitVelocityY) canvas.dataset.rotation = targetRotationY.toFixed(2);
+      }
+      rig.rotation.x += (targetRotationX - rig.rotation.x) * 0.1;
+      rig.rotation.y += (targetRotationY - rig.rotation.y) * 0.1;
       hardware.position.y += ((reduceMotion ? 0.08 : 0.08 + Math.sin(time * 0.8) * 0.045) - hardware.position.y) * 0.05;
       if (screenTexture && time - lastScreenPaint > 1 / 24) {
         paintProjectScreen();

@@ -92,12 +92,52 @@ function applyInvertState(enabled) {
   window.dispatchEvent(new CustomEvent("samiel-themechange", { detail: { inverted: enabled } }));
 }
 
+let themeRainOverlay = null;
+let themeRainTimers = [];
+
+function clearThemeRain() {
+  themeRainTimers.forEach((timer) => window.clearTimeout(timer));
+  themeRainTimers = [];
+  themeRainOverlay?.remove();
+  themeRainOverlay = null;
+  delete document.documentElement.dataset.themeTransition;
+}
+
+function buildThemeRain(enabled) {
+  clearThemeRain();
+  const overlay = document.createElement("div");
+  overlay.className = "theme-rain";
+  overlay.setAttribute("aria-hidden", "true");
+  overlay.style.setProperty("--rain-color", enabled ? "#eeede7" : "#050505");
+
+  const drops = document.createElement("div");
+  drops.className = "theme-rain__drops";
+  for (let index = 0; index < 72; index += 1) {
+    const drop = document.createElement("i");
+    const lane = ((index * 37) % 101) + (((index % 4) - 1.5) * 0.7);
+    const delay = (index % 12) * 24 + Math.floor(index / 12) * 18;
+    const duration = 430 + ((index * 53) % 240);
+    const length = 12 + ((index * 11) % 38);
+    const width = 2 + (index % 3);
+    drop.style.setProperty("--drop-x", `${lane}%`);
+    drop.style.setProperty("--drop-delay", `${delay}ms`);
+    drop.style.setProperty("--drop-duration", `${duration}ms`);
+    drop.style.setProperty("--drop-length", `${length}px`);
+    drop.style.setProperty("--drop-width", `${width}px`);
+    drops.append(drop);
+  }
+
+  const wash = document.createElement("div");
+  wash.className = "theme-rain__wash";
+  overlay.append(drops, wash);
+  document.body.append(overlay);
+  themeRainOverlay = overlay;
+  requestAnimationFrame(() => overlay.classList.add("is-raining"));
+  return overlay;
+}
+
 function setInvert(enabled, options = {}) {
-  const {
-    animate = false,
-    x = window.innerWidth / 2,
-    y = window.innerHeight / 2,
-  } = options;
+  const { animate = false } = options;
   let hasApplied = false;
   const apply = () => {
     if (hasApplied) return;
@@ -105,45 +145,20 @@ function setInvert(enabled, options = {}) {
     applyInvertState(enabled);
   };
 
-  if (!animate || prefersReducedMotion || typeof document.startViewTransition !== "function") {
+  if (!animate || prefersReducedMotion) {
     apply();
     return;
   }
 
   const root = document.documentElement;
-  const radius = Math.hypot(
-    Math.max(x, window.innerWidth - x),
-    Math.max(y, window.innerHeight - y)
-  );
-  root.style.setProperty("--theme-x", `${x}px`);
-  root.style.setProperty("--theme-y", `${y}px`);
-  root.style.setProperty("--theme-radius", `${radius}px`);
+  const overlay = buildThemeRain(enabled);
   root.dataset.themeTransition = enabled ? "to-light" : "to-dark";
-
-  const cleanup = () => {
-    delete root.dataset.themeTransition;
-    root.style.removeProperty("--theme-x");
-    root.style.removeProperty("--theme-y");
-    root.style.removeProperty("--theme-radius");
-  };
-
-  try {
-    const transition = document.startViewTransition(apply);
-    const applyFallback = window.setTimeout(apply, 120);
-    const cleanupFallback = window.setTimeout(() => {
-      apply();
-      cleanup();
-    }, 1400);
-    transition.finished.finally(() => {
-      window.clearTimeout(applyFallback);
-      window.clearTimeout(cleanupFallback);
-      apply();
-      cleanup();
-    });
-  } catch (_) {
+  themeRainTimers.push(window.setTimeout(apply, 790));
+  themeRainTimers.push(window.setTimeout(() => overlay.classList.add("is-clearing"), 900));
+  themeRainTimers.push(window.setTimeout(() => {
     apply();
-    cleanup();
-  }
+    clearThemeRain();
+  }, 1320));
 }
 
 function setGrid(enabled) {

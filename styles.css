@@ -2425,10 +2425,15 @@ body.is-inverted .field-card__media {
   width: 100%;
   height: 100%;
   pointer-events: auto;
-  touch-action: manipulation;
+  touch-action: none;
+  cursor: grab;
   opacity: 0;
   transition: opacity 500ms ease;
 }
+
+.deck-model[data-orbiting] { cursor: grabbing; }
+
+.deck-model[data-cursor] { cursor: pointer; }
 
 .model-ready .deck-model { opacity: 1; }
 
@@ -2836,29 +2841,94 @@ body.is-inverted .deck-model {
   text-align: right;
 }
 
-/* Theme changes reveal from the control point instead of flashing the whole page. */
+/* A few isolated drops arrive first, then the next theme falls over the page. */
 html[data-theme-transition] body {
   transition: none;
 }
 
-html[data-theme-transition]::view-transition-old(root),
-html[data-theme-transition]::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
+.theme-rain {
+  position: fixed;
+  z-index: 20000;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 1;
+  isolation: isolate;
+  transition: opacity 360ms ease;
 }
 
-html[data-theme-transition]::view-transition-old(root) {
-  z-index: 1;
+.theme-rain.is-clearing {
+  opacity: 0;
 }
 
-html[data-theme-transition]::view-transition-new(root) {
+.theme-rain__drops,
+.theme-rain__wash {
+  position: absolute;
+  inset: 0;
+}
+
+.theme-rain__drops {
   z-index: 2;
-  animation: theme-ripple 680ms var(--ease) both;
+  filter: drop-shadow(0 7px 5px color-mix(in srgb, var(--rain-color) 38%, transparent));
 }
 
-@keyframes theme-ripple {
-  from { clip-path: circle(0 at var(--theme-x) var(--theme-y)); }
-  to { clip-path: circle(var(--theme-radius) at var(--theme-x) var(--theme-y)); }
+.theme-rain__drops i {
+  position: absolute;
+  top: calc(-1 * var(--drop-length) - 8vh);
+  left: var(--drop-x);
+  width: var(--drop-width);
+  height: var(--drop-length);
+  border-radius: 999px;
+  background: linear-gradient(to bottom, transparent 0%, var(--rain-color) 42%, var(--rain-color) 100%);
+  opacity: 0;
+  transform: translate3d(-50%, 0, 0) scaleY(0.45);
+  transform-origin: bottom;
+}
+
+.theme-rain.is-raining .theme-rain__drops i {
+  animation: theme-rain-drop var(--drop-duration) cubic-bezier(0.36, 0.04, 0.72, 0.82) var(--drop-delay) both;
+}
+
+.theme-rain__wash {
+  z-index: 1;
+  top: -12%;
+  bottom: -12%;
+  background: var(--rain-color);
+  box-shadow: 0 55px 80px 30px color-mix(in srgb, var(--rain-color) 72%, transparent);
+  transform: translate3d(0, -116%, 0) skewY(-1.5deg);
+  transform-origin: top left;
+}
+
+.theme-rain__wash::after {
+  position: absolute;
+  right: 0;
+  bottom: -34px;
+  left: 0;
+  height: 68px;
+  content: "";
+  background:
+    radial-gradient(circle at 8% 0, var(--rain-color) 0 18px, transparent 19px),
+    radial-gradient(circle at 27% 8%, var(--rain-color) 0 27px, transparent 28px),
+    radial-gradient(circle at 49% 0, var(--rain-color) 0 20px, transparent 21px),
+    radial-gradient(circle at 71% 10%, var(--rain-color) 0 30px, transparent 31px),
+    radial-gradient(circle at 92% 0, var(--rain-color) 0 22px, transparent 23px);
+}
+
+.theme-rain.is-raining .theme-rain__wash {
+  animation: theme-rain-wash 620ms cubic-bezier(0.3, 0.04, 0.12, 1) 180ms forwards;
+}
+
+@keyframes theme-rain-drop {
+  0% { opacity: 0; transform: translate3d(-50%, 0, 0) scaleY(0.35); }
+  10% { opacity: 0.9; }
+  72% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(-50%, 118vh, 0) scaleY(1.5); }
+}
+
+@keyframes theme-rain-wash {
+  0% { transform: translate3d(0, -116%, 0) skewY(-1.5deg); }
+  62% { transform: translate3d(0, -28%, 0) skewY(0.6deg); }
+  100% { transform: translate3d(0, 0, 0) skewY(0); }
 }
 
 @media (max-width: 600px) {
@@ -2891,10 +2961,7 @@ html[data-theme-transition]::view-transition-new(root) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-theme-transition]::view-transition-old(root),
-  html[data-theme-transition]::view-transition-new(root) {
-    animation: none;
-  }
+  .theme-rain { display: none; }
 
   .capabilities__field {
     display: none;

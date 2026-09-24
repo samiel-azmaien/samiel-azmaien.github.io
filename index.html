@@ -26,7 +26,7 @@
     <link rel="preload" href="./assets/models/sony-psp.glb?v=20260917-psp3" as="fetch" crossorigin />
     <link rel="modulepreload" href="./assets/vendor/three.module.min.js" />
     <link rel="modulepreload" href="./assets/vendor/addons/loaders/GLTFLoader.js" />
-    <link rel="stylesheet" href="./styles.css?v=20260924-interactions1" />
+    <link rel="stylesheet" href="./styles.css?v=20260924-rain-orbit1" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -62,7 +62,6 @@
     <main id="main">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hud hud--a" aria-hidden="true">TRK_01&nbsp;&nbsp;0.973</div>
-        <div class="hud hud--b" aria-hidden="true">AUTH&nbsp;&nbsp;VERIFIED</div>
         <div class="hud hud--c" aria-hidden="true">33.7490° N / 84.3880° W</div>
 
         <div class="hero__title-wrap reveal">
@@ -94,7 +93,7 @@
 
         <div class="hero__footer reveal">
           <p>
-            I build AI infrastructure, research systems, and products—then document the decisions, failures, and results behind them.
+            I work on AI infrastructure and research. I write about what I’m building and the problems I run into.
           </p>
           <div class="hero__links" aria-label="Profile links">
             <a href="mailto:samiel@totemlayer.com">Email ↗</a>
@@ -123,10 +122,10 @@
           <h2 id="manifesto-title" class="pixel-title reveal">Building for<br />the machine layer.</h2>
           <div class="manifesto__copy reveal">
             <p class="manifesto__lead">
-              I’m a Georgia Tech computer science student working where AI systems meet search, evaluation, and authorization.
+              I'm a computer science student at Georgia Tech, developing software for AI agents.
             </p>
             <p>
-              My work ranges from agent-facing infrastructure and adversarial model evaluation to GPU memory research and applied machine learning. I care about systems that are legible, testable, and hard to fake.
+              My interests include, but are not limited to, building agent-facing infrastructure, adversarial modeling, evaluating models for machine learning, GPU memory allocation problems, and machine learning applications.
             </p>
             <div class="manifesto__facts">
               <span>Georgia Tech CS</span>
@@ -141,9 +140,8 @@
         <div class="section-bar reveal">
           <div>
             <span class="section-index">SIDE CHANNEL / ORIGIN → NOW</span>
-            <h2 id="field-log-title" class="pixel-title">The signal was always there.</h2>
+            <h2 id="field-log-title" class="pixel-title">The journey.</h2>
           </div>
-          <p>One early loop. Eight recent frames.</p>
         </div>
 
         <div class="field-grid" role="group" aria-label="Personal field notes collage">
@@ -162,41 +160,40 @@
             <button class="field-card__toggle" type="button" data-field-toggle aria-label="Play childhood field note video">PLAY</button>
             <div class="field-card__origin-mark" aria-hidden="true">
               <span>ARCHIVE_00 / THEN</span>
-              <strong>THE FIRST<br />SIGNAL.</strong>
+              <strong>THE<br />ORIGIN.</strong>
             </div>
-            <figcaption><span>THEN_00</span> / ORIGIN SIGNAL</figcaption>
+            <figcaption><span>00</span> / THE FIRST SIGNAL</figcaption>
           </figure>
 
           <div class="field-transition reveal" role="img" aria-label="Then to now: same curiosity, new scale">
             <span>THEN</span>
             <div class="field-transition__signal" aria-hidden="true"><i></i></div>
             <span>NOW</span>
-            <p>SAME CURIOSITY / NEW SCALE</p>
           </div>
 
           <figure class="field-card field-card--bridge field-card--wide field-card--night reveal">
             <img class="field-card__media" src="./assets/field-notes/02-night-bridge.webp" alt="Samiel in motion beside a lit bridge at night" loading="lazy" decoding="async" width="1024" height="768" />
-            <figcaption><span>NOW_01</span> / NIGHT TRANSIT</figcaption>
+            <figcaption><span>01</span> / BAY BRIDGE</figcaption>
           </figure>
 
           <figure class="field-card field-card--city field-card--night reveal">
             <img class="field-card__media" src="./assets/field-notes/03-city-night.webp" alt="Samiel standing on a city street at night" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>NOW_02</span> / CITY WALK</figcaption>
+            <figcaption><span>02</span> / ATLANTA</figcaption>
           </figure>
 
           <figure class="field-card field-card--mountain reveal">
             <img class="field-card__media" src="./assets/field-notes/01-ridgeline.webp" alt="Samiel standing on a mountain ridge in daylight" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>NOW_03</span> / RIDGELINE</figcaption>
+            <figcaption><span>03</span> / YOSEMITE</figcaption>
           </figure>
 
           <figure class="field-card field-card--quiet field-card--night reveal">
             <img class="field-card__media" src="./assets/field-notes/04-after-hours.webp" alt="Samiel standing beneath a streetlamp at night" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>NOW_04</span> / AFTER HOURS</figcaption>
+            <figcaption><span>04</span> / SAN JOSE</figcaption>
           </figure>
 
           <figure class="field-card field-card--event field-card--cool reveal">
             <img class="field-card__media" src="./assets/field-notes/05-live-signal.webp" alt="Samiel walking through a crowded outdoor event at night" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>NOW_05</span> / LIVE SIGNAL</figcaption>
+            <figcaption><span>05</span> / DUBS IN 6</figcaption>
           </figure>
 
           <figure class="field-card field-card--hollywood field-card--warm reveal">
@@ -206,18 +203,17 @@
 
           <figure class="field-card field-card--palace field-card--wide field-card--cool reveal">
             <img class="field-card__media" src="./assets/field-notes/07-blue-hour.webp" alt="Samiel beside a lagoon and illuminated arches at blue hour" loading="lazy" decoding="async" width="1024" height="768" />
-            <figcaption><span>NOW_07</span> / BLUE HOUR</figcaption>
+            <figcaption><span>07</span> / SAN FRANCISCO</figcaption>
           </figure>
 
           <figure class="field-card field-card--temple reveal">
             <img class="field-card__media" src="./assets/field-notes/08-asakusa.webp" alt="Samiel visiting a temple complex in Japan" loading="lazy" decoding="async" width="479" height="640" />
-            <figcaption><span>NOW_08</span> / ASAKUSA</figcaption>
+            <figcaption><span>08</span> / TOKYO</figcaption>
           </figure>
 
           <div class="field-note reveal" role="note" aria-label="Field log summary">
             <span>CURRENT_SIGNAL.LOG</span>
-            <strong>STILL<br />BECOMING.</strong>
-            <p>08 RECENT FRAMES · 01 ORIGIN LOOP</p>
+            <strong>STILL IN<br />PROGRESS.</strong>
           </div>
         </div>
       </section>
@@ -228,14 +224,14 @@
             <span class="section-index">01 / 05</span>
             <h2 id="work-title" class="pixel-title">Project index</h2>
           </div>
-          <p>Use the PSP controls to browse five builds, then open the case files below for the full story.</p>
+          <p>Use the PSP controls to view five different projects, and look at the case files below for the whole story.</p>
         </div>
 
         <div class="project-viewer reveal" data-project-viewer>
           <div class="deck-scene" data-deck-scene>
             <div class="deck-orbit deck-orbit--a" aria-hidden="true"></div>
             <div class="deck-orbit deck-orbit--b" aria-hidden="true"></div>
-            <div class="system-deck" data-deck-shell tabindex="0" aria-label="Interactive project viewer. Use the arrow keys to change projects.">
+            <div class="system-deck" data-deck-shell tabindex="0" aria-label="Interactive project viewer. Drag the PSP to rotate it, and use its controls or the arrow keys to change projects.">
               <canvas class="deck-model" data-project-canvas aria-hidden="true"></canvas>
               <div class="deck-hardware-loading" data-model-loading aria-hidden="true">LOADING HARDWARE_</div>
 
@@ -362,7 +358,6 @@
             <span class="section-index">02 / CASE FILES</span>
             <h2 id="case-studies-title" class="pixel-title">What I built.</h2>
           </div>
-          <p>My contribution, the hard part, what changed in my thinking, and the result.</p>
         </div>
 
         <div class="case-list">
@@ -370,7 +365,7 @@
             <header class="case-study__header">
               <div>
                 <span class="case-study__number">01</span>
-                <p class="case-study__eyebrow">ACTIVE COLLABORATION / AGENT IDENTITY</p>
+                <p class="case-study__eyebrow">CEO / AGENT IDENTITY</p>
                 <h3>Totem</h3>
               </div>
               <div class="case-study__links" aria-label="Totem links">
@@ -818,7 +813,7 @@
       </div>
     </dialog>
 
-    <script src="./script.js?v=20260924-interactions1"></script>
-    <script type="module" src="./project-deck.js?v=20260924-interactions1"></script>
+    <script src="./script.js?v=20260924-rain-orbit1"></script>
+    <script type="module" src="./project-deck.js?v=20260924-rain-orbit1"></script>
   </body>
 </html>
