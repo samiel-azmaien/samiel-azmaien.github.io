@@ -26,7 +26,7 @@
     <link rel="preload" href="./assets/models/sony-psp.glb?v=20260917-psp3" as="fetch" crossorigin />
     <link rel="modulepreload" href="./assets/vendor/three.module.min.js" />
     <link rel="modulepreload" href="./assets/vendor/addons/loaders/GLTFLoader.js" />
-    <link rel="stylesheet" href="./styles.css?v=20260924-rain-orbit1" />
+    <link rel="stylesheet" href="./styles.css?v=20260925-work-archive1" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -49,8 +49,8 @@
       </a>
       <nav class="nav" aria-label="Primary navigation">
         <a href="#work">Work</a>
-        <a href="#case-studies">Build notes</a>
-        <a href="#log">Experience</a>
+        <a href="#case-studies">Work log</a>
+        <a href="#skills">Toolkit</a>
         <a href="#contact">Contact</a>
       </nav>
       <div class="header-status" aria-label="Current status">
@@ -355,11 +355,16 @@
       <section class="case-studies section-shell" id="case-studies" aria-labelledby="case-studies-title">
         <div class="section-bar reveal">
           <div>
-            <span class="section-index">02 / CASE FILES</span>
-            <h2 id="case-studies-title" class="pixel-title">What I built.</h2>
+            <span class="section-index">02 / WORK ARCHIVE</span>
+            <h2 id="case-studies-title" class="pixel-title">Work log.</h2>
           </div>
+          <p>Projects and experience in one trace. Expand any case file for the full story.</p>
         </div>
 
+        <div class="work-archive__label reveal" aria-hidden="true">
+          <span>SELECTED BUILDS</span>
+          <span>05 FILES / CLICK TO EXPAND</span>
+        </div>
         <div class="case-list">
           <article class="case-study reveal" id="project-totem">
             <header class="case-study__header">
@@ -550,15 +555,14 @@
             </ul>
           </article>
         </div>
-      </section>
 
-      <section class="system-log section-shell" id="log" aria-labelledby="log-title">
-        <div class="section-bar reveal">
+        <div class="system-log" id="log" aria-labelledby="log-title">
+          <div class="work-archive__divider section-bar reveal">
           <div>
-            <span class="section-index">03 / TRACE</span>
-            <h2 id="log-title" class="pixel-title">System log</h2>
+              <span class="section-index">EXPERIENCE TRACE</span>
+              <h2 id="log-title" class="pixel-title">Where I worked.</h2>
           </div>
-          <p>Experience, research, and operating context.</p>
+            <p>Research, operating context, and the teams behind the work.</p>
         </div>
 
         <div class="log-list">
@@ -639,6 +643,7 @@
               </p>
             </div>
           </article>
+          </div>
         </div>
       </section>
 
@@ -651,7 +656,7 @@
           <span class="capabilities__hint">HOVER / DISTORT</span>
         </div>
         <div class="capabilities__copy reveal">
-          <span class="section-index">04 / TOOLKIT</span>
+          <span class="section-index">03 / TOOLKIT</span>
           <h2 id="capabilities-title" class="pixel-title">Full-stack,<br />but systems-first.</h2>
           <div class="capability-row">
             <span>Systems &amp; data</span>
@@ -670,10 +675,10 @@
 
       <section class="booking section-shell" id="book" aria-labelledby="booking-title">
         <div class="booking__intro reveal">
-          <span class="section-index">05 / OFFICE HOURS</span>
+          <span class="section-index">04 / OFFICE HOURS</span>
           <h2 id="booking-title" class="pixel-title">Bring a hard problem.</h2>
           <p>
-            Book a private working session for an architecture decision, research direction, portfolio review, or early-stage product problem. Payment and scheduling are secured by Stripe + Calendly.
+            Book a private working sessions for architecture decision, research direction, portfolio review or early-stage product issue. Payments and scheduling are guaranteed through Stripe + Calendly.
           </p>
           <div class="booking__meta">
             <span>GOOGLE MEET</span>
@@ -813,7 +818,7 @@
       </div>
     </dialog>
 
-    <script src="./script.js?v=20260924-rain-orbit1"></script>
+    <script src="./script.js?v=20260925-work-archive1"></script>
     <script type="module" src="./project-deck.js?v=20260924-rain-orbit1"></script>
   </body>
 </html>

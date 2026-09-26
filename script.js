@@ -76,6 +76,129 @@ if (window.location.hash) {
   deepLinkedSection?.querySelectorAll(".reveal").forEach((item) => item.classList.add("is-visible"));
 }
 
+const caseFiles = [...document.querySelectorAll(".case-study")];
+let openCaseFile = () => {};
+
+if (caseFiles.length) {
+  const transitionDuration = 600;
+
+  const setCaseFileState = (article, shouldOpen, options = {}) => {
+    const { animate = true, focus = false } = options;
+    const trigger = article.querySelector(".case-study__trigger");
+    const panel = article.querySelector(".case-study__panel");
+    if (!trigger || !panel || article.classList.contains("is-open") === shouldOpen) return;
+
+    window.clearTimeout(article.caseFileTimer);
+    const startHeight = panel.getBoundingClientRect().height;
+    article.classList.toggle("is-open", shouldOpen);
+    article.classList.remove("is-transitioning");
+    trigger.setAttribute("aria-expanded", String(shouldOpen));
+    panel.setAttribute("aria-hidden", String(!shouldOpen));
+
+    if (!animate || prefersReducedMotion) {
+      panel.style.height = shouldOpen ? "auto" : "0px";
+      if (focus) trigger.focus();
+      return;
+    }
+
+    panel.style.height = `${startHeight}px`;
+    panel.getBoundingClientRect();
+    article.classList.add("is-transitioning");
+    requestAnimationFrame(() => {
+      panel.style.height = shouldOpen ? `${panel.scrollHeight}px` : "0px";
+    });
+
+    article.caseFileTimer = window.setTimeout(() => {
+      panel.style.height = shouldOpen ? "auto" : "0px";
+      article.classList.remove("is-transitioning");
+    }, transitionDuration);
+
+    if (focus) trigger.focus();
+  };
+
+  caseFiles.forEach((article, index) => {
+    const header = article.querySelector(".case-study__header");
+    const identity = header?.firstElementChild;
+    const numberText = identity?.querySelector(".case-study__number")?.textContent.trim() || String(index + 1).padStart(2, "0");
+    const eyebrowText = identity?.querySelector(".case-study__eyebrow")?.textContent.trim() || "CASE FILE";
+    const titleText = identity?.querySelector("h3")?.textContent.trim() || "Project";
+    const panelId = `${article.id || `case-file-${index + 1}`}-panel`;
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "case-study__trigger";
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.setAttribute("aria-controls", panelId);
+    trigger.setAttribute("aria-label", `Expand ${titleText} case file`);
+
+    const number = document.createElement("span");
+    number.className = "case-study__number";
+    number.textContent = numberText;
+
+    const copy = document.createElement("span");
+    copy.className = "case-study__trigger-copy";
+    const eyebrow = document.createElement("span");
+    eyebrow.className = "case-study__eyebrow";
+    eyebrow.textContent = eyebrowText;
+    const title = document.createElement("h3");
+    title.textContent = titleText;
+    copy.append(eyebrow, title);
+
+    const toggle = document.createElement("span");
+    toggle.className = "case-study__toggle";
+    toggle.setAttribute("aria-hidden", "true");
+    const openLabel = document.createElement("span");
+    openLabel.className = "case-study__toggle-open";
+    openLabel.textContent = "OPEN CASE";
+    const closeLabel = document.createElement("span");
+    closeLabel.className = "case-study__toggle-close";
+    closeLabel.textContent = "CLOSE CASE";
+    const toggleMark = document.createElement("i");
+    toggle.append(openLabel, closeLabel, toggleMark);
+    trigger.append(number, copy, toggle);
+
+    const panel = document.createElement("div");
+    panel.className = "case-study__panel";
+    panel.id = panelId;
+    panel.setAttribute("aria-hidden", "true");
+    const panelInner = document.createElement("div");
+    panelInner.className = "case-study__panel-inner";
+    [...article.childNodes].forEach((child) => panelInner.append(child));
+    panel.append(panelInner);
+    article.append(trigger, panel);
+
+    trigger.addEventListener("click", () => {
+      const shouldOpen = !article.classList.contains("is-open");
+      if (shouldOpen) {
+        caseFiles.forEach((other) => {
+          if (other !== article) setCaseFileState(other, false);
+        });
+      }
+      setCaseFileState(article, shouldOpen);
+      trigger.setAttribute("aria-label", `${shouldOpen ? "Collapse" : "Expand"} ${titleText} case file`);
+    });
+  });
+
+  openCaseFile = (article, options = {}) => {
+    if (!article?.classList.contains("case-study")) return;
+    caseFiles.forEach((other) => {
+      if (other !== article) setCaseFileState(other, false, options);
+    });
+    setCaseFileState(article, true, options);
+    article.querySelector(".case-study__trigger")?.setAttribute("aria-label", `Collapse ${article.querySelector(".case-study__trigger h3")?.textContent || "project"} case file`);
+  };
+
+  const openHashCaseFile = (animate = false) => {
+    const target = window.location.hash ? document.querySelector(window.location.hash) : null;
+    if (!target?.classList.contains("case-study")) return;
+    openCaseFile(target, { animate });
+    requestAnimationFrame(() => target.scrollIntoView({ behavior: "auto", block: "start" }));
+  };
+
+  openHashCaseFile(false);
+  window.addEventListener("hashchange", () => openHashCaseFile(!prefersReducedMotion));
+}
+
 const themeMeta = document.querySelector('meta[name="theme-color"]');
 const invertButton = document.querySelector("[data-invert]");
 const gridButton = document.querySelector("[data-grid]");
@@ -745,6 +868,7 @@ if (commandPalette && commandOpenButton && commandInput && commandList) {
   const goToSection = (selector) => {
     const target = document.querySelector(selector);
     if (!target) return;
+    if (target.classList.contains("case-study")) openCaseFile(target, { animate: !prefersReducedMotion });
     try {
       history.pushState(null, "", selector);
     } catch (_) {
@@ -760,9 +884,8 @@ if (commandPalette && commandOpenButton && commandInput && commandList) {
 
   const commands = [
     { label: "Go to featured projects", meta: "NAV", keywords: "work psp portfolio", run: () => goToSection("#work") },
-    { label: "Go to case studies", meta: "NAV", keywords: "projects build stories", run: () => goToSection("#case-studies") },
+    { label: "Go to work log", meta: "NAV", keywords: "projects experience build stories", run: () => goToSection("#case-studies") },
     { label: "Go to field log", meta: "NAV", keywords: "photos origin now collage", run: () => goToSection("#field-log") },
-    { label: "Go to system log", meta: "NAV", keywords: "experience work anthropic totem aws", run: () => goToSection("#log") },
     { label: "Go to technical toolkit", meta: "NAV", keywords: "skills stack aws python pytorch java", run: () => goToSection("#skills") },
     { label: "Go to office hours", meta: "NAV", keywords: "book meeting calendly session", run: () => goToSection("#book") },
     { label: "Go to contact", meta: "NAV", keywords: "email social links", run: () => goToSection("#contact") },
